@@ -9,10 +9,15 @@
     "build:prod": "./node_modules/.bin/webpack --mode production",
     "prettier": "./node_modules/.bin/prettier --write src/**/*.{ts,tsx}"
   },
-  "author": "",
+  "author": "Andrew.Kuryan",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/b457/brownie"
+  },
   "license": "GPL-3.0",
   "dependencies": {
-    "preact": "^10.5.14"
+    "preact": "^10.5.14",
+    "preact-router": "^3.2.1"
   },
   "devDependencies": {
     "css-loader": "^6.2.0",

@@ -3,11 +3,11 @@ const path = require('path');
 module.exports = {
     entry: path.resolve(__dirname, 'src', 'index.tsx'),
     output: {
-        path: path.resolve(__dirname, 'static'),
+        path: path.resolve(__dirname, '../../Java-projects/Brownie-server/app/web'),
         filename: 'build.js',
     },
     resolve: {
-        extensions: ['.ts', '.tsx'],
+        extensions: ['.ts', '.tsx', '.js'],
     },
     module: {
         rules: [
