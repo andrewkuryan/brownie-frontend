@@ -2,6 +2,10 @@ import { FunctionalComponent } from 'preact';
 
 import './input.styl';
 
-export const Input: FunctionalComponent = () => {
-    return <input class="inputField" type="text" />;
+export interface InputProps {
+    promptText?: string;
+}
+
+export const Input: FunctionalComponent<InputProps> = ({ promptText }) => {
+    return <input class="inputField" type="text" placeholder={promptText} />;
 };

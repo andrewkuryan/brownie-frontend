@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'preact';
-import EmailStepView from './steps/email';
+import EmailStepView from './steps/contacts';
 
 import './register.styl';
 

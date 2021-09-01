@@ -1,4 +1,4 @@
-import { arrayBufferToBase64, stringToArrayBuffer } from '../utils/transforms';
+import { arrayBufferToBase64, stringToArrayBuffer } from '@utils/transforms';
 
 export interface FrontendSession {
     publicKey: CryptoKey;
