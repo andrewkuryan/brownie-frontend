@@ -16,6 +16,7 @@
   },
   "license": "GPL-3.0",
   "dependencies": {
+    "detect-browser": "^5.2.0",
     "preact": "^10.5.14",
     "preact-router": "^3.2.1"
   },
