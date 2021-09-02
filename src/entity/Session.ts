@@ -1,7 +1,7 @@
 export default class FrontendSession {
     constructor(
-        private publicKey: CryptoKey,
-        private privateKey: CryptoKey,
+        private publicKey: string,
+        private privateKey: string,
         private browserName: string,
         private osName: string,
     ) {}

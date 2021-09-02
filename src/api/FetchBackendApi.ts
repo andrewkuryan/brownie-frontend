@@ -1,4 +1,8 @@
-import { arrayBufferToBase64, stringToArrayBuffer } from '@utils/transforms';
+import {
+    arrayBufferToBase64,
+    base64ToArrayBuffer,
+    stringToArrayBuffer,
+} from '@utils/transforms';
 import BackendApi, { BackendUserApi, FetchingRequest, FullRequest, Query } from './BackendApi';
 import FetchUserApi from './FetchUserApi';
 import FrontendSession from '@entity/Session';
@@ -6,16 +10,22 @@ import FrontendSession from '@entity/Session';
 export default class FetchBackendApi implements BackendApi {
     userApi: BackendUserApi;
 
-    private constructor(private session: FrontendSession, private publicKeyBase64: string) {
+    private constructor(private session: FrontendSession, private privateKey: CryptoKey) {
         this.userApi = new FetchUserApi(this);
     }
 
     static async build(session: FrontendSession): Promise<FetchBackendApi> {
-        const spki = await window.crypto.subtle.exportKey(
-            'spki',
-            session.getPublicKey() as CryptoKey,
+        const privateKey = await window.crypto.subtle.importKey(
+            'pkcs8',
+            base64ToArrayBuffer(session.getPrivateKey()),
+            {
+                name: 'ECDSA',
+                namedCurve: 'P-521',
+            },
+            true,
+            ['sign'],
         );
-        return new FetchBackendApi(session, arrayBufferToBase64(spki));
+        return new FetchBackendApi(session, privateKey);
     }
 
     private buildQueryString = (query: Query) =>
@@ -44,13 +54,13 @@ export default class FetchBackendApi implements BackendApi {
                 name: 'ECDSA',
                 hash: 'SHA-512', // SHA-1, SHA-256, SHA-384, or SHA-512
             },
-            this.session.getPrivateKey(),
+            this.privateKey,
             await stringToArrayBuffer(JSON.stringify(request)),
         );
         return arrayBufferToBase64(signature);
     };
 
-    private jsonRequest = async <T>(method: string, { url, query, body }: FullRequest) => {
+    private jsonRequest = async (method: string, { url, query, body }: FullRequest) => {
         const fullUrl = this.buildFullUrl(url, query);
         const signature = await this.signRequest({
             url: fullUrl,
@@ -62,25 +72,25 @@ export default class FetchBackendApi implements BackendApi {
         return (await fetch(fullUrl, {
             method: method,
             headers: {
-                'X-PublicKey': this.publicKeyBase64,
+                'X-PublicKey': this.session.getPublicKey(),
                 'X-BrowserName': this.session.getBrowserName(),
                 'X-OsName': this.session.getOsName(),
                 'X-Signature': signature,
                 ...(body ? { 'Content-Type': 'application/json' } : {}),
             },
             ...(body ? { body: JSON.stringify(body) } : {}),
-        }).then(res => res.json())) as T;
+        }).then(res => res.json()));
     };
 
-    get = async <T>({ url, query }: FetchingRequest) =>
-        this.jsonRequest<T>('GET', { url, query });
+    get = async ({ url, query }: FetchingRequest) =>
+        this.jsonRequest('GET', { url, query });
 
-    post = async <T>({ url, query, body }: FullRequest) =>
-        this.jsonRequest<T>('POST', { url, query, body });
+    post = async ({ url, query, body }: FullRequest) =>
+        this.jsonRequest('POST', { url, query, body });
 
-    put = async <T>({ url, query, body }: FullRequest) =>
-        this.jsonRequest<T>('PUT', { url, query, body });
+    put = async ({ url, query, body }: FullRequest) =>
+        this.jsonRequest('PUT', { url, query, body });
 
-    delete = async <T>({ url, query }: FetchingRequest) =>
-        this.jsonRequest<T>('DELETE', { url, query });
+    delete = async ({ url, query }: FetchingRequest) =>
+        this.jsonRequest('DELETE', { url, query });
 }

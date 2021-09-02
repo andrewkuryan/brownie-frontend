@@ -5,10 +5,10 @@ export type FullRequest = { url: string; query?: Query; body?: any };
 export type FetchingRequest = { url: string; query?: Query };
 
 export default interface BackendApi {
-    get: <T>(params: FetchingRequest) => Promise<T>;
-    post: <T>(params: FullRequest) => Promise<T>;
-    put: <T>(params: FullRequest) => Promise<T>;
-    delete: <T>(params: FetchingRequest) => Promise<T>;
+    get: (params: FetchingRequest) => Promise<any>;
+    post: (params: FullRequest) => Promise<any>;
+    put: (params: FullRequest) => Promise<any>;
+    delete: (params: FetchingRequest) => Promise<any>;
 
     userApi: BackendUserApi;
 }
