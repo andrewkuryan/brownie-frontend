@@ -7,3 +7,16 @@ placeholderStyle()
     {block}
   &:-ms-input-placeholder
     {block}
+
+blurAround(border-radius = 4px, size = 5px)
+  &::after
+    content ''
+    position absolute
+    top 0
+    left 0
+    width 100%
+    height 100%
+    border-radius border-radius
+    box-shadow 0 0 size rgba(primeGreen, 0.8)
+    opacity 0
+    transition opacity 0.3s ease-in-out

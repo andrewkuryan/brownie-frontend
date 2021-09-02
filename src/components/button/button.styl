@@ -1,11 +1,32 @@
+@import "@colors.styl"
+@import "@styleUtils.styl"
+
 .buttonRoot
-  height 40px
-  background-color green
+  position relative
+  height 36px
+  background-color primeGreen
   color white
-  padding 0
-  border 1px solid black
-  border-radius 10px
+  padding 0 8px 0 8px
+  border none
+  border-radius 4px
+  font-size 16px
+  blurAround()
+  &::before
+    content ''
+    position absolute
+    top 0
+    left 0
+    width 100%
+    height 100%
+    border-radius 4px
+    background-color black
+    opacity 0
+    transition opacity 0.2s ease-in-out
+  &:hover
+    cursor pointer
+    &::after
+       opacity 1
   &:focus
     outline none
-  &:active
-    border-color red
+  &:active::before
+    opacity 0.2

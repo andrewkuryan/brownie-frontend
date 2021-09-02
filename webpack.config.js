@@ -11,8 +11,8 @@ module.exports = {
         alias: {
             '@components': path.resolve(__dirname, 'src/components/'),
             '@utils': path.resolve(__dirname, 'src/utils/'),
-            '@colors': path.resolve(__dirname, 'src/colors.styl'),
-            '@styleUtils': path.resolve(__dirname, 'src/styleUtils.styl'),
+            '@colors.styl': path.resolve(__dirname, 'src/colors.styl'),
+            '@styleUtils.styl': path.resolve(__dirname, 'src/styleUtils.styl'),
         },
     },
     module: {

@@ -1,5 +1,5 @@
-@import "@colors"
-@import "@styleUtils"
+@import "@colors.styl"
+@import "@styleUtils.styl"
 
 .inputField
   height 34px
@@ -7,6 +7,8 @@
   border 1px solid lightGray
   padding 0 8px 0 8px
   font-size 18px
+  box-shadow 0 0 3px rgba(primeGreen, 0.0)
+  transition box-shadow 0.3s ease-in-out
   +placeholderStyle()
     color veryLightGray
     opacity 0.6
