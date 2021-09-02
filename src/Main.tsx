@@ -3,7 +3,8 @@ import { useEffect } from 'preact/hooks';
 import { Router, Route } from 'preact-router';
 import RegisterView from './pages/register';
 import { detect } from 'detect-browser';
-import BackendApi, { FrontendSession } from './api/BackendApi';
+import FetchBackendApi from './api/FetchBackendApi';
+import FrontendSession from '@entity/Session';
 
 async function createSession(): Promise<FrontendSession> {
     const keyPair = await window.crypto.subtle.generateKey(
@@ -18,20 +19,19 @@ async function createSession(): Promise<FrontendSession> {
         throw new Error("Can't generate key pair");
     }
     const browser = detect();
-    return {
-        publicKey: keyPair.publicKey,
-        privateKey: keyPair.privateKey,
-        browserName: browser?.name || 'unknown',
-        osName: browser?.os || 'unknown',
-    };
+    return new FrontendSession(
+        keyPair.publicKey,
+        keyPair.privateKey,
+        browser?.name || 'unknown',
+        browser?.os || 'unknown',
+    );
 }
 
 export const MainView: FunctionComponent = () => {
     useEffect(() => {
         createSession()
-            .then(session => BackendApi.build(session))
-            .then(api => api.testCreate({ text: 'Test message' }))
-            .then(res => res.json())
+            .then(session => FetchBackendApi.build(session))
+            .then(api => api.userApi.getUser())
             .then(result => {
                 console.log(result);
             });

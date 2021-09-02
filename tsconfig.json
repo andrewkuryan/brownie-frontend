@@ -12,6 +12,7 @@
     "paths": {
       "@components/*": ["src/components/*"],
       "@utils/*": ["src/utils/*"],
+      "@entity/*": ["src/entity/*"],
     }
   },
   "exclude": [
