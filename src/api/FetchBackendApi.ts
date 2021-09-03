@@ -69,7 +69,7 @@ export default class FetchBackendApi implements BackendApi {
             method: method,
             body,
         });
-        return (await fetch(fullUrl, {
+        return await fetch(fullUrl, {
             method: method,
             headers: {
                 'X-PublicKey': this.session.getPublicKey(),
@@ -79,11 +79,10 @@ export default class FetchBackendApi implements BackendApi {
                 ...(body ? { 'Content-Type': 'application/json' } : {}),
             },
             ...(body ? { body: JSON.stringify(body) } : {}),
-        }).then(res => res.json()));
+        }).then(res => res.json());
     };
 
-    get = async ({ url, query }: FetchingRequest) =>
-        this.jsonRequest('GET', { url, query });
+    get = async ({ url, query }: FetchingRequest) => this.jsonRequest('GET', { url, query });
 
     post = async ({ url, query, body }: FullRequest) =>
         this.jsonRequest('POST', { url, query, body });

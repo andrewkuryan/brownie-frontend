@@ -9,10 +9,10 @@ export default class FetchUserApi implements BackendUserApi {
         let user;
         switch (result.type) {
             case 'GuestUser':
-                user = new GuestUser(result.data.id, result.data.permissions)
+                user = new GuestUser(result.data.id, result.data.permissions);
                 break;
             default:
-                throw new Error(`Unknown object type: ${result.type}`)
+                throw new Error(`Unknown object type: ${result.type}`);
         }
         return user;
     }

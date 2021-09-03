@@ -8,14 +8,16 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "allowJs": true,
+    "esModuleInterop": true,
     "baseUrl": "./",
     "paths": {
       "@components/*": ["src/components/*"],
       "@utils/*": ["src/utils/*"],
       "@entity/*": ["src/entity/*"],
+      "@api/*": ["src/api/*"]
     }
   },
   "exclude": [
     "node_modules"
-  ]
+  ],
 }

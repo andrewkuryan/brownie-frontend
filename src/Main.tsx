@@ -3,7 +3,7 @@ import { useEffect } from 'preact/hooks';
 import { Router, Route } from 'preact-router';
 import RegisterView from './pages/register';
 import { detect } from 'detect-browser';
-import FetchBackendApi from './api/FetchBackendApi';
+import FetchBackendApi from '@api/FetchBackendApi';
 import FrontendSession from '@entity/Session';
 import { arrayBufferToBase64 } from '@utils/transforms';
 
