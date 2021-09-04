@@ -14,7 +14,9 @@
       "@components/*": ["src/components/*"],
       "@utils/*": ["src/utils/*"],
       "@entity/*": ["src/entity/*"],
-      "@api/*": ["src/api/*"]
+      "@api/*": ["src/api/*"],
+      "@application/*": ["src/application/*"],
+      "@assets/*": ["src/assets/*"],
     }
   },
   "exclude": [

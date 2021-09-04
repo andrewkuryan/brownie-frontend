@@ -1,6 +1,6 @@
 import { Store } from 'redux';
 import { useEffect, useState } from 'preact/hooks';
-import { AppAction, AppState } from '../application/Store';
+import { AppAction, AppState } from '@application/Store';
 import isEqual from 'lodash.isequal';
 
 export function useStore<T>(

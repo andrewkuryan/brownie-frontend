@@ -13,6 +13,8 @@ module.exports = {
             '@utils': path.resolve(__dirname, 'src/utils/'),
             '@entity': path.resolve(__dirname, 'src/entity/'),
             '@api': path.resolve(__dirname, 'src/api/'),
+            '@application': path.resolve(__dirname, 'src/application/'),
+            '@assets': path.resolve(__dirname, 'src/assets'),
             '@colors.styl': path.resolve(__dirname, 'src/colors.styl'),
             '@styleUtils.styl': path.resolve(__dirname, 'src/styleUtils.styl'),
         },
@@ -36,14 +38,7 @@ module.exports = {
             },
             {
                 test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|eot|ttf)$/,
-                use: [
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 20000,
-                        }
-                    },
-                ],
+                type: 'asset/inline'
             }
         ]
     },
