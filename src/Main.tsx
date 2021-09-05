@@ -1,11 +1,16 @@
 import { FunctionComponent } from 'preact';
-import { useEffect } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { Router, Route } from 'preact-router';
 import RegisterView from './pages/register';
 import { detect } from 'detect-browser';
 import FetchBackendApi from '@api/FetchBackendApi';
 import FrontendSession from '@entity/Session';
 import { arrayBufferToBase64 } from '@utils/transforms';
+import LoadingView from './pages/loading';
+import { applyMiddleware, createStore } from 'redux';
+import { AppAction, appReducer, AppState, defaultAppState } from '@application/Store';
+import { loadUserMiddleware } from '@application/user/UserMiddleware';
+import { useStore } from '@utils/redux';
 
 async function createSession(): Promise<FrontendSession> {
     const browser = detect();
@@ -47,19 +52,41 @@ async function createSession(): Promise<FrontendSession> {
     }
 }
 
+export type ReduxProps = {
+    useStore: <T>(getter: (state: AppState) => T) => T;
+    dispatch: (action: AppAction) => void;
+};
+
 export const MainView: FunctionComponent = () => {
+    const [reduxProps, setReduxProps] = useState<ReduxProps | undefined>(undefined);
+
     useEffect(() => {
         createSession()
             .then(session => FetchBackendApi.build(session))
-            .then(api => api.userApi.getUser())
-            .then(result => {
-                console.log(result);
+            .then(api => {
+                const store = createStore<AppState, AppAction, {}, {}>(
+                    appReducer,
+                    defaultAppState,
+                    applyMiddleware(loadUserMiddleware(api)),
+                );
+                store.dispatch({ type: 'USER/LOAD' });
+                setReduxProps({
+                    useStore: getter => useStore(store, getter),
+                    dispatch: store.dispatch,
+                });
             });
-    });
+    }, []);
 
-    return (
+    return reduxProps === undefined ? (
+        <LoadingView />
+    ) : (
         <Router>
-            <Route component={RegisterView} path="/register" />
+            <Route
+                path="/register"
+                component={RegisterView}
+                useStore={reduxProps.useStore}
+                dispatch={reduxProps.dispatch}
+            />
         </Router>
     );
 };

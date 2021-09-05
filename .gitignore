@@ -1,4 +1,6 @@
 node_modules
 .idea
 
-build.js
+static/build.js
+static/styles.css
+static/report.html

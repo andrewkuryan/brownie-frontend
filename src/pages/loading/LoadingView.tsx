@@ -4,7 +4,9 @@ import ProgressIndicator from '@components/progressIndicator';
 import './loading.styl';
 
 export const LoadingView: FunctionComponent = () => {
-    return <div class="loadingRoot">
-        <ProgressIndicator />
-    </div>
-}
+    return (
+        <div class="loadingRoot">
+            <ProgressIndicator />
+        </div>
+    );
+};

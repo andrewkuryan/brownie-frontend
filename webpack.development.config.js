@@ -1,9 +1,17 @@
 const path = require('path');
+const WebpackShellPluginNext = require('webpack-shell-plugin-next');
+const fs = require('fs');
+const util = require('util');
+const dotenv = require('dotenv');
+
+const copyFileAsync = util.promisify(fs.copyFile);
+const customEnv = dotenv.config();
 
 module.exports = {
+    mode: 'development',
     entry: path.resolve(__dirname, 'src', 'index.tsx'),
     output: {
-        path: path.resolve(__dirname, '../../Java-projects/Brownie-server/app/web'),
+        path: path.resolve(__dirname, 'static'),
         filename: 'build.js',
     },
     resolve: {
@@ -31,15 +39,30 @@ module.exports = {
                 use: [
                     'style-loader',
                     'css-loader',
-                    {
-                        loader: "stylus-loader",
-                    },
+                    'stylus-loader',
                 ],
             },
             {
                 test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|eot|ttf)$/,
-                type: 'asset/inline'
-            }
-        ]
+                type: 'asset/inline',
+            },
+        ],
     },
-}
+    plugins: [
+        new WebpackShellPluginNext({
+            onBuildEnd: {
+                scripts: [() => Promise.all([
+                    copyFileAsync(
+                        path.resolve(__dirname, 'static', 'build.js'),
+                        path.resolve(customEnv.parsed.SERVER_RES_DIR, 'build.js'),
+                    ),
+                    copyFileAsync(
+                        path.resolve(__dirname, 'static', 'index.dev.html'),
+                        path.resolve(customEnv.parsed.SERVER_RES_DIR, 'index.html'),
+                    ),
+                ])],
+                blocking: true,
+            },
+        }),
+    ],
+};

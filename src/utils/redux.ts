@@ -1,4 +1,4 @@
-import { Store } from 'redux';
+import { Dispatch, MiddlewareAPI, Store } from 'redux';
 import { useEffect, useState } from 'preact/hooks';
 import { AppAction, AppState } from '@application/Store';
 import isEqual from 'lodash.isequal';
@@ -20,3 +20,21 @@ export function useStore<T>(
     }, []);
     return reduxState;
 }
+
+export const middlewareForActionType = (
+    actionType: AppAction['type'],
+    middleware: (
+        middlewareApi: MiddlewareAPI<Dispatch<AppAction>, AppState>,
+        action: AppAction,
+    ) => AppAction,
+) => {
+    return (api: MiddlewareAPI<Dispatch<AppAction>, AppState>) =>
+        (next: Dispatch<AppAction>) =>
+        (action: AppAction) => {
+            if (action.type === actionType) {
+                return next(middleware(api, action));
+            } else {
+                return next(action);
+            }
+        };
+};

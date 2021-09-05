@@ -1,4 +1,4 @@
-import { createStore, Reducer } from 'redux';
+import { Reducer } from 'redux';
 
 import { defaultUserState, userReducer, UserState } from './user/UserReducer';
 import { UserAction } from './user/UserActions';
@@ -9,11 +9,11 @@ export interface AppState {
 
 export type AppAction = UserAction;
 
-const defaultAppState: AppState = {
+export const defaultAppState: AppState = {
     user: defaultUserState,
 };
 
-const appReducer: Reducer<AppState, AppAction> = (
+export const appReducer: Reducer<AppState, AppAction> = (
     state: AppState | undefined,
     action: AppAction,
 ) => {
@@ -27,5 +27,3 @@ const appReducer: Reducer<AppState, AppAction> = (
             return defaultAppState;
     }
 };
-
-export const store = createStore<AppState, AppAction, {}, {}>(appReducer, defaultAppState);

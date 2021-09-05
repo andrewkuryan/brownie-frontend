@@ -7,6 +7,7 @@ export interface ButtonProps {
     onClick: () => void;
     className?: string;
     graphics?: VNode<any>;
+    link?: string;
 }
 
 export const Button: FunctionalComponent<ButtonProps> = ({
@@ -14,11 +15,17 @@ export const Button: FunctionalComponent<ButtonProps> = ({
     className,
     onClick,
     graphics,
+    link,
 }) => {
-    return (
+    return link === undefined ? (
         <button class={`buttonRoot ${className || ''}`} onClick={onClick}>
             {text}
             {graphics}
         </button>
+    ) : (
+        <a class={`buttonRoot ${className || ''}`} onClick={onClick} href={link}>
+            {text}
+            {graphics}
+        </a>
     );
 };

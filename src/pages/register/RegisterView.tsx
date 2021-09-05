@@ -1,14 +1,15 @@
 import { FunctionComponent } from 'preact';
-import EmailStepView from './steps/contacts';
+import ContactsStepView from './steps/contacts';
+import { ReduxProps } from '../../Main';
 
 import './register.styl';
 
-export const RegisterView: FunctionComponent = () => {
+export const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => {
     return (
         <div class="registerRoot">
             <div class="stepCard">
                 <div class="stepContent">
-                    <EmailStepView />
+                    <ContactsStepView useStore={useStore} dispatch={dispatch} />
                 </div>
                 <div class="stepsWrapper">
                     <div class="stepPoint">
