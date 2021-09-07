@@ -1,15 +1,30 @@
-type Permission = 'READ_UPDATES';
+import { UserContact } from '@entity/Contact';
+
+export type Permission = 'READ_UPDATES';
 
 export class GuestUser {
-    constructor(private id: number, private permissions: Array<Permission>) {}
-
-    getId() {
-        return this.id;
-    }
-
-    getPermissions() {
-        return this.permissions;
-    }
+    constructor(public readonly id: number, public readonly permissions: Array<Permission>) {}
 }
 
-export type User = GuestUser;
+export class BlankUser {
+    constructor(
+        public readonly id: number,
+        public readonly permissions: Array<Permission>,
+        public readonly contact: UserContact,
+    ) {}
+}
+
+export class ActiveUser {
+    constructor(
+        public readonly id: number,
+        public readonly permissions: Array<Permission>,
+        public readonly contacts: Array<UserContact>,
+        public readonly data: UserData,
+    ) {}
+}
+
+export class UserData {
+    constructor(public readonly login: string | null) {}
+}
+
+export type User = GuestUser | BlankUser | ActiveUser;

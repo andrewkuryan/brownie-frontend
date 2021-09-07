@@ -48,7 +48,7 @@ export default class FetchBackendApi implements BackendApi {
         method: string;
         body?: any;
     }) => {
-        console.log(JSON.stringify(request));
+        console.log('Request: ', request);
         const signature = await window.crypto.subtle.sign(
             {
                 name: 'ECDSA',

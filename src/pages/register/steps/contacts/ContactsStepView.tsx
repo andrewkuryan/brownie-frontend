@@ -28,7 +28,7 @@ const TgContactOption: FunctionalComponent<ReduxProps & { selected: boolean }> =
     const state = useStore(state => state.user);
 
     const formatLink = (user: User | null) =>
-        `https://t.me/BrownieUpdatesBot?start=${user?.getId()}`;
+        `https://t.me/BrownieUpdatesBot?start=userId-${user?.id}`;
 
     return (
         <div class={`tgOptionRoot ${selected ? 'selected' : ''}`}>
