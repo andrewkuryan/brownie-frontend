@@ -1,0 +1,42 @@
+@import "@styleUtils.styl"
+@import "@colors.styl"
+
+.stepperRoot
+  width 100%
+  display flex
+  flex-direction row
+  align-items center
+  justify-content space-around
+  .stepPoint
+    position relative
+    width 40px
+    height 40px
+    margin 0
+    border-radius 20px
+    background-color white
+    display flex
+    align-items center
+    justify-content center
+    color black
+    box-shadow 0 0 5px rgba(0, 0, 0, 0.5)
+    &.current
+      blurAround(20px)
+      color primeGreen
+      &::after
+        opacity 1
+    &.passed
+      blurAround(20px)
+      background-color primeGreen
+      color white
+      &::after
+        opacity 1
+  .stepPlaceholder
+    height 3px
+    flex 1
+    margin 0 8px
+    background-image linear-gradient(to right, rgba(0, 0, 0, 0.5) 50%, transparent 50%)
+    background-position left top
+    background-repeat repeat-x
+    background-size 20px 3px
+    &.passed
+      background-image linear-gradient(to right, primeGreen 50%, transparent 50%)

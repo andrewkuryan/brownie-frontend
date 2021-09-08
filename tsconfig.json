@@ -9,6 +9,7 @@
     "strictNullChecks": true,
     "allowJs": true,
     "esModuleInterop": true,
+    "downlevelIteration": true,
     "baseUrl": "./",
     "paths": {
       "@components/*": ["src/components/*"],
