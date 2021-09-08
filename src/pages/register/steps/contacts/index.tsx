@@ -56,7 +56,7 @@ const TgContactOption: FunctionalComponent<ReduxProps & { selected: boolean }> =
     );
 };
 
-export const ContactsStepView: FunctionalComponent<ReduxProps> = ({ useStore, dispatch }) => {
+const ContactsStepView: FunctionalComponent<ReduxProps> = ({ useStore, dispatch }) => {
     const [selectedOption, setSelectedOption] = useState<'email' | 'tg'>('email');
 
     return (
@@ -87,3 +87,5 @@ export const ContactsStepView: FunctionalComponent<ReduxProps> = ({ useStore, di
         </div>
     );
 };
+
+export default ContactsStepView;

@@ -6,7 +6,7 @@ import Stepper from '@components/stepper';
 
 import './register.styl';
 
-export const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => {
+const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => {
     const [currentStep, setCurrentStep] = useState<
         'contact' | 'verifyContact' | 'fulfill' | 'done'
     >('contact');
@@ -17,8 +17,10 @@ export const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch
                 <div class="stepContent">
                     <ContactsStepView useStore={useStore} dispatch={dispatch} />
                 </div>
-                <Stepper numOfSteps={4} currentStep={1}/>
+                <Stepper numOfSteps={4} currentStep={4} />
             </div>
         </div>
     );
 };
+
+export default RegisterView;

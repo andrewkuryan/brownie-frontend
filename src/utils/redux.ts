@@ -1,7 +1,6 @@
 import { Dispatch, MiddlewareAPI, Store } from 'redux';
 import { useEffect, useState } from 'preact/hooks';
 import { AppAction, AppState } from '@application/Store';
-import isEqual from 'lodash.isequal';
 
 export function useStore<T>(
     store: Store<AppState, AppAction>,
@@ -11,7 +10,7 @@ export function useStore<T>(
     useEffect(() => {
         console.log('Use effect');
         const unsubscribe = store.subscribe(() => {
-            if (!isEqual(getter(store.getState()), reduxState)) {
+            if (!deepEqual(getter(store.getState()), reduxState)) {
                 console.log('New state: ', store.getState());
                 setReduxState(getter(store.getState()));
             }
@@ -38,3 +37,27 @@ export const middlewareForActionType = (
             }
         };
 };
+
+export function deepEqual(x: any, y: any) {
+    if (x === y) {
+        return true;
+    } else if (typeof x == 'object' && x != null && typeof y == 'object' && y != null) {
+        if (Object.keys(x).length !== Object.keys(y).length) {
+            return false;
+        }
+        for (const prop in x) {
+            if (x.hasOwnProperty(prop)) {
+                if (y.hasOwnProperty(prop)) {
+                    if (!deepEqual(x[prop], y[prop])) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    } else {
+        return false;
+    }
+}

@@ -10,7 +10,7 @@ export interface ButtonProps {
     link?: string;
 }
 
-export const Button: FunctionalComponent<ButtonProps> = ({
+const Button: FunctionalComponent<ButtonProps> = ({
     text,
     className,
     onClick,
@@ -29,3 +29,5 @@ export const Button: FunctionalComponent<ButtonProps> = ({
         </a>
     );
 };
+
+export default Button;

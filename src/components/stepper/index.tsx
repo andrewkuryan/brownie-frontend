@@ -7,7 +7,7 @@ export interface StepperProps {
     currentStep: number;
 }
 
-export const Stepper: FunctionalComponent<StepperProps> = ({ numOfSteps, currentStep }) => {
+const Stepper: FunctionalComponent<StepperProps> = ({ numOfSteps, currentStep }) => {
     return (
         <div class="stepperRoot">
             {[...Array(numOfSteps).keys()].map(num => (
@@ -29,3 +29,5 @@ export const Stepper: FunctionalComponent<StepperProps> = ({ numOfSteps, current
         </div>
     );
 };
+
+export default Stepper;

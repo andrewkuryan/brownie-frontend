@@ -3,10 +3,12 @@ import ProgressIndicator from '@components/progressIndicator';
 
 import './loading.styl';
 
-export const LoadingView: FunctionComponent = () => {
+const LoadingView: FunctionComponent = () => {
     return (
         <div class="loadingRoot">
             <ProgressIndicator />
         </div>
     );
 };
+
+export default LoadingView;

@@ -6,6 +6,8 @@ export interface InputProps {
     promptText?: string;
 }
 
-export const Input: FunctionalComponent<InputProps> = ({ promptText }) => {
+const Input: FunctionalComponent<InputProps> = ({ promptText }) => {
     return <input class="inputField" type="text" placeholder={promptText} />;
 };
+
+export default Input;
