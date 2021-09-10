@@ -3,8 +3,8 @@ import { ReduxProps } from '../../../../Main';
 import { UnconfirmedUserContact } from '@entity/Contact';
 import { useForm } from '@components/form';
 
-import './verifyStep.styl';
 import '../commonStep.styl';
+import './verifyStep.styl';
 
 export interface VerifyStepViewProps {
     contact: UnconfirmedUserContact;

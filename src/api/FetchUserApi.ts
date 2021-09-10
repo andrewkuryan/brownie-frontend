@@ -22,7 +22,7 @@ export default class FetchUserApi implements BackendUserApi {
             url: `/api/user/contact/${contact.id}/verify`,
             body: { verificationCode },
         });
-        return parseContact(result)
+        return parseContact(result);
     }
 }
 

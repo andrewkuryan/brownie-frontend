@@ -26,7 +26,7 @@ async function createSession(): Promise<FrontendSession> {
             ['sign'],
         );
         if (keyPair.publicKey === undefined || keyPair.privateKey === undefined) {
-            throw new Error('Can\'t generate key pair');
+            throw new Error("Can't generate key pair");
         }
         const exportedPublicKey = arrayBufferToBase64(
             await crypto.subtle.exportKey('spki', keyPair.publicKey),
@@ -82,7 +82,7 @@ export const MainView: FunctionComponent = () => {
     ) : (
         <Router>
             <Route
-                path='/register'
+                path="/register"
                 component={RegisterView}
                 useStore={reduxProps.useStore}
                 dispatch={reduxProps.dispatch}

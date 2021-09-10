@@ -2,6 +2,7 @@ import { FunctionComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import ContactsStepView from './steps/contacts';
 import VerifyStepView from './steps/verify';
+import FulfillStepView from './steps/fulfill';
 import { ReduxProps } from '../../Main';
 import Stepper from '@components/stepper';
 import { ActiveUser, BlankUser, GuestUser } from '@entity/User';
@@ -51,6 +52,8 @@ const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => 
                             useStore={useStore}
                             dispatch={dispatch}
                         />
+                    ) : currentStep === 'fulfill' ? (
+                        <FulfillStepView />
                     ) : null}
                 </div>
                 <Stepper

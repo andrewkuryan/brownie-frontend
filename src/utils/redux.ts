@@ -31,13 +31,13 @@ export const middlewareForActionType = <T extends AppAction>(
 ) => {
     return (api: MiddlewareAPI<Dispatch<AppAction>, AppState>) =>
         (next: Dispatch<AppAction>) =>
-            (action: AppAction) => {
-                if (action.type === actionType) {
-                    return next(middleware(api, action as T));
-                } else {
-                    return next(action);
-                }
-            };
+        (action: AppAction) => {
+            if (action.type === actionType) {
+                return next(middleware(api, action as T));
+            } else {
+                return next(action);
+            }
+        };
 };
 
 export function deepEqual(x: any, y: any) {

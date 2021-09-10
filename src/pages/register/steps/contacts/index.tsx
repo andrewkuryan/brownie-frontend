@@ -4,8 +4,8 @@ import Input from '@components/input';
 import Button from '@components/button';
 import { GuestUser, User } from '@entity/User';
 
-import './contactsStep.styl';
 import '../commonStep.styl';
+import './contactsStep.styl';
 import telegramIcon from '@assets/telegram_icon_136124_white.svg';
 import copyIcon from '@assets/content_copy_white_48dp.svg';
 

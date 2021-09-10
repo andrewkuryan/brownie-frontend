@@ -4,6 +4,7 @@
 .inputField
   height 34px
   border-radius 4px
+  box-sizing border-box
   border 1px solid lightGray
   padding 0 8px
   font-size 18px
@@ -18,3 +19,19 @@
     border-color primeGreen
     box-shadow 0 0 3px rgba(primeGreen, 0.6)
     outline none
+
+.passwordFieldWrapper
+  position relative
+  .passwordToggle
+    width 26px
+    height 26px
+    position absolute
+    right 8px
+    top 4px
+    background-repeat no-repeat
+    background-position center
+    background-size 100% 100%
+    &.password
+      background-image url("@assets/view.svg")
+    &.text
+      background-image url("@assets/private.svg")

@@ -1,10 +1,10 @@
 import { FunctionalComponent } from 'preact';
 import { useLayoutEffect, useRef } from 'preact/hooks';
-import { FormInput, InputFormProps } from '@components/input';
+import { FormInput, FormPasswordInput, InputFormProps } from '@components/input';
 import { PrimitiveType } from '@utils/parser';
 import { ButtonFormProps, FormButton } from '@components/button';
 
-export type FormStructure = { [key: string]: { type: 'string' | 'number' } };
+export type FormStructure = { [key: string]: { type: 'string' | 'string?' | 'number' } };
 type SubmitValueType<T extends FormStructure> = {
     [key in keyof T]: PrimitiveType<T[key]['type']>;
 };
@@ -17,6 +17,7 @@ export function useForm<T extends FormStructure>(
 ): {
     Form: FunctionalComponent<FormProps<T>>;
     Input: FunctionalComponent<InputFormProps<T>>;
+    Password: FunctionalComponent<InputFormProps<T>>;
     Button: FunctionalComponent<ButtonFormProps>;
 } {
     return {
@@ -30,6 +31,9 @@ export function useForm<T extends FormStructure>(
                         switch (value.type) {
                             case 'string':
                                 result[key] = element.value;
+                                break;
+                            case 'string?':
+                                result[key] = element.value || null;
                                 break;
                             case 'number':
                                 result[key] = parseFloat(element.value);
@@ -51,6 +55,7 @@ export function useForm<T extends FormStructure>(
             return <form ref={formRef}>{children}</form>;
         },
         Input: FormInput<T>(),
+        Password: FormPasswordInput<T>(),
         Button: FormButton<T>(),
     };
 }

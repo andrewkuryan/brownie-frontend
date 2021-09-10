@@ -1,5 +1,6 @@
 import { FunctionalComponent } from 'preact';
 import { FormStructure } from '@components/form';
+import { useState } from 'preact/hooks';
 
 import './input.styl';
 
@@ -28,6 +29,32 @@ export function FormInput<T extends FormStructure>(): FunctionalComponent<InputF
                 placeholder={promptText}
                 maxLength={maxLength}
             />
+        );
+    };
+}
+
+export function FormPasswordInput<T extends FormStructure>(): FunctionalComponent<
+    InputFormProps<T>
+> {
+    return ({ name, promptText, maxLength }) => {
+        const [type, setType] = useState<'text' | 'password'>('password');
+
+        return (
+            <div class="passwordFieldWrapper">
+                <input
+                    class="inputField"
+                    type={type}
+                    name={name.toString()}
+                    placeholder={promptText}
+                    maxLength={maxLength}
+                />
+                <span
+                    class={`passwordToggle ${type}`}
+                    onClick={() => {
+                        setType(type === 'text' ? 'password' : 'text');
+                    }}
+                />
+            </div>
         );
     };
 }
