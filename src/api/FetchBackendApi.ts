@@ -55,7 +55,7 @@ export default class FetchBackendApi implements BackendApi {
                 hash: 'SHA-512', // SHA-1, SHA-256, SHA-384, or SHA-512
             },
             this.privateKey,
-            await stringToArrayBuffer(JSON.stringify(request)),
+            stringToArrayBuffer(JSON.stringify(request)),
         );
         return arrayBufferToBase64(signature);
     };

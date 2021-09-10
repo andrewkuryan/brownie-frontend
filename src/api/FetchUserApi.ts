@@ -1,4 +1,4 @@
-import BackendApi, { BackendUserApi } from './BackendApi';
+import BackendApi, { BackendUserApi, FulfillUserParams } from './BackendApi';
 import { ActiveUser, BlankUser, GuestUser, Permission, User, UserData } from '@entity/User';
 import { getApiValue, getApiValues } from '@utils/parser';
 import {
@@ -23,6 +23,14 @@ export default class FetchUserApi implements BackendUserApi {
             body: { verificationCode },
         });
         return parseContact(result);
+    }
+
+    async fulfillUser(params: FulfillUserParams) {
+        const result = await this.backendApi.put({
+            url: '/api/user/fulfill',
+            body: params,
+        });
+        return parseUser(result) as ActiveUser;
     }
 }
 

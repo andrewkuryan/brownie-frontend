@@ -53,7 +53,7 @@ const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => 
                             dispatch={dispatch}
                         />
                     ) : currentStep === 'fulfill' ? (
-                        <FulfillStepView />
+                        <FulfillStepView useStore={useStore} dispatch={dispatch} />
                     ) : null}
                 </div>
                 <Stepper

@@ -24,6 +24,8 @@ export const userReducer: Reducer<UserState, UserAction> = (
             return state;
         case 'USER/VERIFY_CONTACT':
             return state;
+        case 'USER/FULFILL':
+            return state;
         default:
             return defaultUserState;
     }

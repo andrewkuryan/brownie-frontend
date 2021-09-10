@@ -1,10 +1,11 @@
 import { FunctionalComponent } from 'preact';
 import { useForm } from '@components/form';
+import { ReduxProps } from '../../../../Main';
 
 import '../commonStep.styl';
 import './fulfillStep.styl';
 
-const FulfillStepView: FunctionalComponent = () => {
+const FulfillStepView: FunctionalComponent<ReduxProps> = ({ dispatch }) => {
     const { Form, Input, Password, Button } = useForm({
         login: { type: 'string?' },
         password: { type: 'string' },
@@ -14,7 +15,7 @@ const FulfillStepView: FunctionalComponent = () => {
     return (
         <Form
             onSubmit={values => {
-                console.log(values);
+                dispatch({ type: 'USER/FULFILL', payload: values });
             }}
         >
             <div class="commonStepRoot fulfillStepRoot">

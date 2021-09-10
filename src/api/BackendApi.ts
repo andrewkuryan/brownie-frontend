@@ -1,4 +1,4 @@
-import { User } from '@entity/User';
+import { ActiveUser, User } from '@entity/User';
 import { UserContact } from '@entity/Contact';
 
 export type Query = { [_: string]: string };
@@ -14,7 +14,14 @@ export default interface BackendApi {
     userApi: BackendUserApi;
 }
 
+export interface FulfillUserParams {
+    login: string | null;
+    passwordHash: string;
+    confirmedPasswordHash: string;
+}
+
 export interface BackendUserApi {
     getUser: () => Promise<User>;
     verifyContact: (contact: UserContact, verificationCode: string) => Promise<UserContact>;
+    fulfillUser: (params: FulfillUserParams) => Promise<ActiveUser>;
 }

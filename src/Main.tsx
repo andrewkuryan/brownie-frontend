@@ -9,7 +9,11 @@ import { arrayBufferToBase64 } from '@utils/transforms';
 import LoadingView from './pages/loading';
 import { applyMiddleware, createStore } from 'redux';
 import { AppAction, appReducer, AppState, defaultAppState } from '@application/Store';
-import { loadUserMiddleware, verifyContactMiddleware } from '@application/user/UserMiddleware';
+import {
+    fulfillUserMiddleware,
+    loadUserMiddleware,
+    verifyContactMiddleware,
+} from '@application/user/UserMiddleware';
 import { useStore } from '@utils/redux';
 
 async function createSession(): Promise<FrontendSession> {
@@ -67,7 +71,11 @@ export const MainView: FunctionComponent = () => {
                 const store = createStore<AppState, AppAction, {}, {}>(
                     appReducer,
                     defaultAppState,
-                    applyMiddleware(loadUserMiddleware(api), verifyContactMiddleware(api)),
+                    applyMiddleware(
+                        loadUserMiddleware(api),
+                        verifyContactMiddleware(api),
+                        fulfillUserMiddleware(api),
+                    ),
                 );
                 store.dispatch({ type: 'USER/LOAD' });
                 setReduxProps({

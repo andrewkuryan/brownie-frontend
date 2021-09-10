@@ -1,16 +1,10 @@
-export function stringToArrayBuffer(text: string, encoding = 'UTF-8'): Promise<ArrayBuffer> {
-    return new Promise<ArrayBuffer>((resolve, reject) => {
-        const blob = new Blob([text], { type: `text/plain;charset=${encoding}` });
-        const reader = new FileReader();
-        reader.onload = evt => {
-            if (evt.target) {
-                resolve(evt.target.result as ArrayBuffer);
-            } else {
-                reject(new Error('Could not convert string to array!'));
-            }
-        };
-        reader.readAsArrayBuffer(blob);
-    });
+export function stringToArrayBuffer(text: string): ArrayBuffer {
+    const buf = new ArrayBuffer(text.length);
+    const bufView = new Uint8Array(buf);
+    for (let i = 0, strLen = text.length; i < strLen; i++) {
+        bufView[i] = text.charCodeAt(i);
+    }
+    return buf;
 }
 
 export function arrayBufferToBase64(buffer: ArrayBuffer): string {
