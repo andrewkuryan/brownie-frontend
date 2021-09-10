@@ -9,7 +9,7 @@ import { arrayBufferToBase64 } from '@utils/transforms';
 import LoadingView from './pages/loading';
 import { applyMiddleware, createStore } from 'redux';
 import { AppAction, appReducer, AppState, defaultAppState } from '@application/Store';
-import { loadUserMiddleware } from '@application/user/UserMiddleware';
+import { loadUserMiddleware, verifyContactMiddleware } from '@application/user/UserMiddleware';
 import { useStore } from '@utils/redux';
 
 async function createSession(): Promise<FrontendSession> {
@@ -26,7 +26,7 @@ async function createSession(): Promise<FrontendSession> {
             ['sign'],
         );
         if (keyPair.publicKey === undefined || keyPair.privateKey === undefined) {
-            throw new Error("Can't generate key pair");
+            throw new Error('Can\'t generate key pair');
         }
         const exportedPublicKey = arrayBufferToBase64(
             await crypto.subtle.exportKey('spki', keyPair.publicKey),
@@ -67,7 +67,7 @@ export const MainView: FunctionComponent = () => {
                 const store = createStore<AppState, AppAction, {}, {}>(
                     appReducer,
                     defaultAppState,
-                    applyMiddleware(loadUserMiddleware(api)),
+                    applyMiddleware(loadUserMiddleware(api), verifyContactMiddleware(api)),
                 );
                 store.dispatch({ type: 'USER/LOAD' });
                 setReduxProps({
@@ -82,7 +82,7 @@ export const MainView: FunctionComponent = () => {
     ) : (
         <Router>
             <Route
-                path="/register"
+                path='/register'
                 component={RegisterView}
                 useStore={reduxProps.useStore}
                 dispatch={reduxProps.dispatch}

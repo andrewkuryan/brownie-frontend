@@ -9,7 +9,7 @@ type PrimitiveTypeName =
     | 'string?'
     | 'number?';
 
-type PrimitiveType<N extends PrimitiveTypeName> = N extends 'string'
+export type PrimitiveType<N extends PrimitiveTypeName> = N extends 'string'
     ? string
     : N extends 'number'
     ? number

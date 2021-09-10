@@ -20,6 +20,10 @@ export const userReducer: Reducer<UserState, UserAction> = (
     switch (action.type) {
         case 'USER/SET_USER':
             return { ...state, currentUser: action.payload };
+        case 'USER/LOAD':
+            return state;
+        case 'USER/VERIFY_CONTACT':
+            return state;
         default:
             return defaultUserState;
     }

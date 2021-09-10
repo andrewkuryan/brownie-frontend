@@ -2,10 +2,10 @@ import { FunctionalComponent } from 'preact';
 import { useState } from 'preact/hooks';
 import Input from '@components/input';
 import Button from '@components/button';
-import { ReduxProps } from '../../../../Main';
-import { User } from '@entity/User';
+import { GuestUser, User } from '@entity/User';
 
 import './contactsStep.styl';
+import '../commonStep.styl';
 import telegramIcon from '@assets/telegram_icon_136124_white.svg';
 import copyIcon from '@assets/content_copy_white_48dp.svg';
 
@@ -21,12 +21,10 @@ const EmailContactOption: FunctionalComponent<{ selected: boolean }> = ({ select
     );
 };
 
-const TgContactOption: FunctionalComponent<ReduxProps & { selected: boolean }> = ({
-    useStore,
+const TgContactOption: FunctionalComponent<{ user: GuestUser; selected: boolean }> = ({
+    user,
     selected,
 }) => {
-    const state = useStore(state => state.user);
-
     const formatLink = (user: User | null) =>
         `https://t.me/BrownieUpdatesBot?start=userId-${user?.id}`;
 
@@ -38,9 +36,7 @@ const TgContactOption: FunctionalComponent<ReduxProps & { selected: boolean }> =
             <div class="buttonBlock">
                 <Button
                     text="Copy link"
-                    onClick={() =>
-                        navigator.clipboard.writeText(formatLink(state.currentUser))
-                    }
+                    onClick={() => navigator.clipboard.writeText(formatLink(user))}
                     graphics={<img class="buttonIcon" src={copyIcon} alt="⬈" />}
                 />
                 <Button
@@ -48,7 +44,7 @@ const TgContactOption: FunctionalComponent<ReduxProps & { selected: boolean }> =
                     onClick={() => {
                         console.log('After Follow');
                     }}
-                    link={formatLink(state.currentUser)}
+                    link={formatLink(user)}
                     graphics={<img class="buttonIcon" src={telegramIcon} alt="⬈" />}
                 />
             </div>
@@ -56,11 +52,15 @@ const TgContactOption: FunctionalComponent<ReduxProps & { selected: boolean }> =
     );
 };
 
-const ContactsStepView: FunctionalComponent<ReduxProps> = ({ useStore, dispatch }) => {
+export interface ContactsStepViewProps {
+    user: GuestUser;
+}
+
+const ContactsStepView: FunctionalComponent<ContactsStepViewProps> = ({ user }) => {
     const [selectedOption, setSelectedOption] = useState<'email' | 'tg'>('email');
 
     return (
-        <div class="contactsStepRoot">
+        <div class="commonStepRoot contactsStepRoot">
             <h2>Enter your contact information</h2>
             <div class="optionsWrapper">
                 <p
@@ -78,11 +78,7 @@ const ContactsStepView: FunctionalComponent<ReduxProps> = ({ useStore, dispatch 
             </div>
             <div class="optionContent">
                 <EmailContactOption selected={selectedOption === 'email'} />
-                <TgContactOption
-                    selected={selectedOption === 'tg'}
-                    useStore={useStore}
-                    dispatch={dispatch}
-                />
+                <TgContactOption selected={selectedOption === 'tg'} user={user} />
             </div>
         </div>
     );

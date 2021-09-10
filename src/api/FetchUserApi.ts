@@ -16,6 +16,14 @@ export default class FetchUserApi implements BackendUserApi {
         const result = await this.backendApi.get({ url: '/api/user' });
         return parseUser(result);
     }
+
+    async verifyContact(contact: UserContact, verificationCode: string) {
+        const result = await this.backendApi.post({
+            url: `/api/user/contact/${contact.id}/verify`,
+            body: { verificationCode },
+        });
+        return parseContact(result)
+    }
 }
 
 function parseUser(parsedJson: any): User {
