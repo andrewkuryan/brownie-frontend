@@ -1,8 +1,4 @@
-import {
-    arrayBufferToBase64,
-    base64ToArrayBuffer,
-    stringToArrayBuffer,
-} from '@utils/transforms';
+import { arrayBufferToBase64, stringToArrayBuffer } from '@utils/transforms';
 import BackendApi, { BackendUserApi, FetchingRequest, FullRequest, Query } from './BackendApi';
 import FetchUserApi from './FetchUserApi';
 import FrontendSession from '@entity/Session';
@@ -10,22 +6,8 @@ import FrontendSession from '@entity/Session';
 export default class FetchBackendApi implements BackendApi {
     userApi: BackendUserApi;
 
-    private constructor(private session: FrontendSession, private privateKey: CryptoKey) {
+    constructor(private session: FrontendSession) {
         this.userApi = new FetchUserApi(this);
-    }
-
-    static async build(session: FrontendSession): Promise<FetchBackendApi> {
-        const privateKey = await window.crypto.subtle.importKey(
-            'pkcs8',
-            base64ToArrayBuffer(session.getPrivateKey()),
-            {
-                name: 'ECDSA',
-                namedCurve: 'P-521',
-            },
-            true,
-            ['sign'],
-        );
-        return new FetchBackendApi(session, privateKey);
     }
 
     private buildQueryString = (query: Query) =>
@@ -54,7 +36,7 @@ export default class FetchBackendApi implements BackendApi {
                 name: 'ECDSA',
                 hash: 'SHA-512', // SHA-1, SHA-256, SHA-384, or SHA-512
             },
-            this.privateKey,
+            this.session.privateKey,
             stringToArrayBuffer(JSON.stringify(request)),
         );
         return arrayBufferToBase64(signature);
@@ -64,17 +46,17 @@ export default class FetchBackendApi implements BackendApi {
         const fullUrl = this.buildFullUrl(url, query);
         const signature = await this.signRequest({
             url: fullUrl,
-            browserName: this.session.getBrowserName(),
-            osName: this.session.getOsName(),
+            browserName: this.session.browserName,
+            osName: this.session.osName,
             method: method,
             body,
         });
         return await fetch(fullUrl, {
             method: method,
             headers: {
-                'X-PublicKey': this.session.getPublicKey(),
-                'X-BrowserName': this.session.getBrowserName(),
-                'X-OsName': this.session.getOsName(),
+                'X-PublicKey': this.session.publicKey,
+                'X-BrowserName': this.session.browserName,
+                'X-OsName': this.session.osName,
                 'X-Signature': signature,
                 ...(body ? { 'Content-Type': 'application/json' } : {}),
             },

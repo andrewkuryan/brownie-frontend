@@ -1,24 +1,8 @@
 export default class FrontendSession {
     constructor(
-        private publicKey: string,
-        private privateKey: string,
-        private browserName: string,
-        private osName: string,
+        public readonly publicKey: string,
+        public readonly privateKey: CryptoKey,
+        public readonly browserName: string,
+        public readonly osName: string,
     ) {}
-
-    getPublicKey() {
-        return this.publicKey;
-    }
-
-    getPrivateKey() {
-        return this.privateKey;
-    }
-
-    getBrowserName() {
-        return this.browserName;
-    }
-
-    getOsName() {
-        return this.osName;
-    }
 }
