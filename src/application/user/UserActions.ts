@@ -5,7 +5,8 @@ export type UserAction =
     | SetUserAction
     | LoadUserAction
     | VerifyContactAction
-    | FulfillUserAction;
+    | FulfillUserAction
+    | LoginAction;
 
 export type SetUserAction = { type: 'USER/SET_USER'; payload: User | null };
 export type LoadUserAction = { type: 'USER/LOAD' };
@@ -15,5 +16,9 @@ export type VerifyContactAction = {
 };
 export type FulfillUserAction = {
     type: 'USER/FULFILL';
-    payload: { login: string | null; password: string; passwordConfirm: string };
+    payload: { login: string; password: string };
 };
+export type LoginAction = {
+    type: 'USER/LOGIN',
+    payload: { login: string; password: string };
+}

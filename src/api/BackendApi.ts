@@ -15,13 +15,37 @@ export default interface BackendApi {
 }
 
 export interface FulfillUserParams {
-    login: string | null;
-    passwordHash: string;
-    confirmedPasswordHash: string;
+    login: string;
+    salt: string;
+    verifierHex: string;
+}
+
+export interface InitLoginParams {
+    login: string;
+    AHex: string;
+}
+
+export interface InitLoginResponse {
+    salt: string;
+    BHex: string;
+}
+
+export interface VerifyLoginParams {
+    login: string;
+    AHex: string;
+    BHex: string;
+    MHex: string;
+}
+
+export interface VerifyLoginResponse {
+    RHex: string;
+    user: ActiveUser;
 }
 
 export interface BackendUserApi {
     getUser: () => Promise<User>;
     verifyContact: (contact: UserContact, verificationCode: string) => Promise<UserContact>;
     fulfillUser: (params: FulfillUserParams) => Promise<ActiveUser>;
+    initLogin: (params: InitLoginParams) => Promise<InitLoginResponse>;
+    verifyLogin: (params: VerifyLoginParams) => Promise<VerifyLoginResponse>;
 }

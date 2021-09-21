@@ -2,11 +2,19 @@ import BackendApi from '@api/BackendApi';
 import { middlewareForActionType } from '@utils/redux';
 import {
     FulfillUserAction,
+    LoginAction,
     LoadUserAction,
     VerifyContactAction,
 } from '@application/user/UserActions';
 import { ActiveUser, BlankUser } from '@entity/User';
-import { arrayBufferToBase64, stringToArrayBuffer } from '@utils/transforms';
+import {
+    computeM,
+    computeR,
+    computeSession,
+    generateA,
+    generateSaltVerifier,
+    sha512Hex,
+} from '@utils/crypto/srp';
 
 export const loadUserMiddleware = (api: BackendApi) =>
     middlewareForActionType<LoadUserAction>('USER/LOAD', (middlewareApi, action) => {
@@ -49,25 +57,42 @@ export const verifyContactMiddleware = (api: BackendApi) =>
 
 export const fulfillUserMiddleware = (api: BackendApi) =>
     middlewareForActionType<FulfillUserAction>('USER/FULFILL', (middlewareApi, action) => {
-        const passwordHashBuffer = stringToArrayBuffer(
-            `${action.payload.login}${action.payload.password}`,
-        );
-        const confirmedPasswordHashBuffer = stringToArrayBuffer(
-            `${action.payload.login}${action.payload.passwordConfirm}`,
-        );
-        Promise.all([
-            window.crypto.subtle.digest('SHA-512', passwordHashBuffer),
-            window.crypto.subtle.digest('SHA-512', confirmedPasswordHashBuffer),
-        ])
-            .then(([passwordHashArray, confirmedPasswordHashArray]) => {
+        generateSaltVerifier(action.payload.login, action.payload.password)
+            .then(({ salt, verifier }) => {
                 return api.userApi.fulfillUser({
                     login: action.payload.login,
-                    passwordHash: arrayBufferToBase64(passwordHashArray),
-                    confirmedPasswordHash: arrayBufferToBase64(confirmedPasswordHashArray),
+                    salt: salt,
+                    verifierHex: verifier.toString(16),
                 });
             })
             .then(result => {
                 middlewareApi.dispatch({ type: 'USER/SET_USER', payload: result });
             });
+        return action;
+    });
+
+export const loginMiddleware = (api: BackendApi) =>
+    middlewareForActionType<LoginAction>('USER/LOGIN', (middlewareApi, action) => {
+        const { a, A } = generateA();
+        const login = action.payload.login;
+        const password = action.payload.password;
+        api.userApi.initLogin({ login, AHex: A.toString(16) }).then(async ({ salt, BHex }) => {
+            const B = BigInt('0x' + BHex);
+            const S = await computeSession(login, password, salt, a, A, B);
+            const KHex = await sha512Hex(S.toString(16));
+            const MHex = await computeM(login, salt, A, B, KHex);
+            const { RHex, user } = await api.userApi.verifyLogin({
+                login,
+                AHex: A.toString(16),
+                BHex,
+                MHex,
+            });
+            const expectedR = await computeR(A, MHex, KHex);
+            if (RHex == expectedR) {
+                middlewareApi.dispatch({ type: 'USER/SET_USER', payload: user });
+            } else {
+                throw new Error('Server not verified');
+            }
+        });
         return action;
     });

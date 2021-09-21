@@ -2,6 +2,7 @@ import { FunctionComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { Router, Route } from 'preact-router';
 import RegisterView from './pages/register';
+import LoginView from './pages/login';
 import { detect } from 'detect-browser';
 import FetchBackendApi from '@api/FetchBackendApi';
 import FrontendSession from '@entity/Session';
@@ -11,6 +12,7 @@ import { applyMiddleware, createStore } from 'redux';
 import { AppAction, appReducer, AppState, defaultAppState } from '@application/Store';
 import {
     fulfillUserMiddleware,
+    loginMiddleware,
     loadUserMiddleware,
     verifyContactMiddleware,
 } from '@application/user/UserMiddleware';
@@ -110,6 +112,7 @@ export const MainView: FunctionComponent = () => {
                     loadUserMiddleware(api),
                     verifyContactMiddleware(api),
                     fulfillUserMiddleware(api),
+                    loginMiddleware(api),
                 ),
             );
             store.dispatch({ type: 'USER/LOAD' });
@@ -127,6 +130,12 @@ export const MainView: FunctionComponent = () => {
             <Route
                 path="/register"
                 component={RegisterView}
+                useStore={reduxProps.useStore}
+                dispatch={reduxProps.dispatch}
+            />
+            <Route
+                path="/login"
+                component={LoginView}
                 useStore={reduxProps.useStore}
                 dispatch={reduxProps.dispatch}
             />

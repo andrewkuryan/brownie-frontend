@@ -1,4 +1,9 @@
-import BackendApi, { BackendUserApi, FulfillUserParams } from './BackendApi';
+import BackendApi, {
+    BackendUserApi,
+    FulfillUserParams,
+    InitLoginParams,
+    VerifyLoginParams,
+} from './BackendApi';
 import { ActiveUser, BlankUser, GuestUser, Permission, User, UserData } from '@entity/User';
 import { getApiValue, getApiValues } from '@utils/parser';
 import {
@@ -32,6 +37,24 @@ export default class FetchUserApi implements BackendUserApi {
         });
         return parseUser(result) as ActiveUser;
     }
+
+    async initLogin(params: InitLoginParams) {
+        const result = await this.backendApi.post({
+            url: '/api/user/login/init',
+            body: params,
+        });
+        return getApiValues(result, { salt: 'string', BHex: 'string' });
+    }
+
+    async verifyLogin(params: VerifyLoginParams) {
+        const result = await this.backendApi.post({
+            url: '/api/user/login/verify',
+            body: params,
+        });
+        console.log('verifyLogin: ', result);
+        const { RHex, user } = getApiValues(result, { RHex: 'string', user: 'object' });
+        return { RHex, user: parseUser(user) as ActiveUser };
+    }
 }
 
 function parseUser(parsedJson: any): User {
@@ -53,7 +76,7 @@ function parseUser(parsedJson: any): User {
 }
 
 function parseUserData(parsedJson: any): UserData {
-    const login = getApiValue(parsedJson, 'login', 'string?');
+    const login = getApiValue(parsedJson, 'login', 'string');
     return new UserData(login);
 }
 

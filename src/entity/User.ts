@@ -24,7 +24,7 @@ export class ActiveUser {
 }
 
 export class UserData {
-    constructor(public readonly login: string | null) {}
+    constructor(public readonly login: string) {}
 }
 
 export type User = GuestUser | BlankUser | ActiveUser;

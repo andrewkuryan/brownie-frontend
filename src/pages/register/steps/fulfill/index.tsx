@@ -7,7 +7,7 @@ import './fulfillStep.styl';
 
 const FulfillStepView: FunctionalComponent<ReduxProps> = ({ dispatch }) => {
     const { Form, Input, Password, Button } = useForm({
-        login: { type: 'string?' },
+        login: { type: 'string' },
         password: { type: 'string' },
         passwordConfirm: { type: 'string' },
     });

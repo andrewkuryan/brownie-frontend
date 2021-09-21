@@ -26,6 +26,8 @@ export const userReducer: Reducer<UserState, UserAction> = (
             return state;
         case 'USER/FULFILL':
             return state;
+        case 'USER/LOGIN':
+            return state;
         default:
             return defaultUserState;
     }

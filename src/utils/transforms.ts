@@ -1,10 +1,13 @@
-export function stringToArrayBuffer(text: string): ArrayBuffer {
-    const buf = new ArrayBuffer(text.length);
-    const bufView = new Uint8Array(buf);
+export function stringToUint8Array(text: string): Uint8Array {
+    const bufView = new Uint8Array(text.length);
     for (let i = 0, strLen = text.length; i < strLen; i++) {
         bufView[i] = text.charCodeAt(i);
     }
-    return buf;
+    return bufView;
+}
+
+export function stringToArrayBuffer(text: string): ArrayBuffer {
+    return stringToUint8Array(text).buffer;
 }
 
 export function arrayBufferToBase64(buffer: ArrayBuffer): string {
@@ -17,12 +20,6 @@ export function arrayBufferToBase64(buffer: ArrayBuffer): string {
     return window.btoa(binary);
 }
 
-export function base64ToArrayBuffer(base64: string): ArrayBuffer {
-    const binaryString = window.atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes.buffer;
+export function arrayBufferToHex(buffer: ArrayBuffer): string {
+    return [...new Uint8Array(buffer)].map(x => x.toString(16).padStart(2, '0')).join('');
 }
