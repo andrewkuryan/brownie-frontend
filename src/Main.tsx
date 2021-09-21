@@ -17,6 +17,7 @@ import {
     verifyContactMiddleware,
 } from '@application/user/UserMiddleware';
 import { useStore } from '@utils/redux';
+import SrpGenerator from '@utils/crypto/srp';
 
 function openSignKeyPairStore(): Promise<IDBObjectStore> {
     return new Promise((resolve, reject) => {
@@ -103,16 +104,21 @@ export const MainView: FunctionComponent = () => {
     const [reduxProps, setReduxProps] = useState<ReduxProps | undefined>(undefined);
 
     useEffect(() => {
-        createSession().then(session => {
+        createSession().then(async session => {
             const api = new FetchBackendApi(session);
+            const srpGenerator = await SrpGenerator.build(
+                BigInt('0x' + SRP_N),
+                parseInt(SRP_NBitLen),
+                BigInt('0x' + SRP_g),
+            );
             const store = createStore<AppState, AppAction, {}, {}>(
                 appReducer,
                 defaultAppState,
                 applyMiddleware(
                     loadUserMiddleware(api),
                     verifyContactMiddleware(api),
-                    fulfillUserMiddleware(api),
-                    loginMiddleware(api),
+                    fulfillUserMiddleware(api, srpGenerator),
+                    loginMiddleware(api, srpGenerator),
                 ),
             );
             store.dispatch({ type: 'USER/LOAD' });

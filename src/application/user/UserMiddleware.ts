@@ -7,14 +7,8 @@ import {
     VerifyContactAction,
 } from '@application/user/UserActions';
 import { ActiveUser, BlankUser } from '@entity/User';
-import {
-    computeM,
-    computeR,
-    computeSession,
-    generateA,
-    generateSaltVerifier,
-    sha512Hex,
-} from '@utils/crypto/srp';
+import SrpGenerator from '@utils/crypto/srp';
+import { hash512 } from '@utils/crypto/sha';
 
 export const loadUserMiddleware = (api: BackendApi) =>
     middlewareForActionType<LoadUserAction>('USER/LOAD', (middlewareApi, action) => {
@@ -55,9 +49,10 @@ export const verifyContactMiddleware = (api: BackendApi) =>
         },
     );
 
-export const fulfillUserMiddleware = (api: BackendApi) =>
+export const fulfillUserMiddleware = (api: BackendApi, srpGenerator: SrpGenerator) =>
     middlewareForActionType<FulfillUserAction>('USER/FULFILL', (middlewareApi, action) => {
-        generateSaltVerifier(action.payload.login, action.payload.password)
+        srpGenerator
+            .generateSaltVerifier(action.payload.login, action.payload.password)
             .then(({ salt, verifier }) => {
                 return api.userApi.fulfillUser({
                     login: action.payload.login,
@@ -71,23 +66,23 @@ export const fulfillUserMiddleware = (api: BackendApi) =>
         return action;
     });
 
-export const loginMiddleware = (api: BackendApi) =>
+export const loginMiddleware = (api: BackendApi, srpGenerator: SrpGenerator) =>
     middlewareForActionType<LoginAction>('USER/LOGIN', (middlewareApi, action) => {
-        const { a, A } = generateA();
+        const { a, A } = srpGenerator.generateA();
         const login = action.payload.login;
         const password = action.payload.password;
         api.userApi.initLogin({ login, AHex: A.toString(16) }).then(async ({ salt, BHex }) => {
             const B = BigInt('0x' + BHex);
-            const S = await computeSession(login, password, salt, a, A, B);
-            const KHex = await sha512Hex(S.toString(16));
-            const MHex = await computeM(login, salt, A, B, KHex);
+            const S = await srpGenerator.computeSession(login, password, salt, a, A, B);
+            const KHex = hash512(S.toString(16));
+            const MHex = await srpGenerator.computeM(login, salt, A, B, KHex);
             const { RHex, user } = await api.userApi.verifyLogin({
                 login,
                 AHex: A.toString(16),
                 BHex,
                 MHex,
             });
-            const expectedR = await computeR(A, MHex, KHex);
+            const expectedR = await srpGenerator.computeR(A, MHex, KHex);
             if (RHex == expectedR) {
                 middlewareApi.dispatch({ type: 'USER/SET_USER', payload: user });
             } else {

@@ -4,8 +4,10 @@ const fs = require('fs');
 const util = require('util');
 const dotenv = require('dotenv');
 
+const commonConfig = require('./webpack.common.config');
+
 const copyFileAsync = util.promisify(fs.copyFile);
-const customEnv = dotenv.config();
+const buildEnv = dotenv.config({ path: '.build.env' });
 
 module.exports = {
     mode: 'development',
@@ -15,52 +17,34 @@ module.exports = {
         filename: 'build.js',
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js'],
-        alias: {
-            '@components': path.resolve(__dirname, 'src/components/'),
-            '@utils': path.resolve(__dirname, 'src/utils/'),
-            '@entity': path.resolve(__dirname, 'src/entity/'),
-            '@api': path.resolve(__dirname, 'src/api/'),
-            '@application': path.resolve(__dirname, 'src/application/'),
-            '@assets': path.resolve(__dirname, 'src/assets'),
-            '@colors.styl': path.resolve(__dirname, 'src/colors.styl'),
-            '@styleUtils.styl': path.resolve(__dirname, 'src/styleUtils.styl'),
-        },
+        ...commonConfig.resolve,
     },
     module: {
         rules: [
-            {
-                test: /\.(ts|tsx)$/,
-                loader: 'ts-loader',
-                exclude: /node_modules/,
-            },
+            ...commonConfig.module.rules,
             {
                 test: /\.styl$/,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                    'stylus-loader',
-                ],
-            },
-            {
-                test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|eot|ttf)$/,
-                type: 'asset/inline',
+                use: ['style-loader', 'css-loader', 'stylus-loader'],
             },
         ],
     },
     plugins: [
+        ...commonConfig.plugins,
         new WebpackShellPluginNext({
             onBuildEnd: {
-                scripts: [() => Promise.all([
-                    copyFileAsync(
-                        path.resolve(__dirname, 'static', 'build.js'),
-                        path.resolve(customEnv.parsed.SERVER_RES_DIR, 'build.js'),
-                    ),
-                    copyFileAsync(
-                        path.resolve(__dirname, 'static', 'index.dev.html'),
-                        path.resolve(customEnv.parsed.SERVER_RES_DIR, 'index.html'),
-                    ),
-                ])],
+                scripts: [
+                    () =>
+                        Promise.all([
+                            copyFileAsync(
+                                path.resolve(__dirname, 'static', 'build.js'),
+                                path.resolve(buildEnv.parsed.SERVER_RES_DIR, 'build.js'),
+                            ),
+                            copyFileAsync(
+                                path.resolve(__dirname, 'static', 'index.dev.html'),
+                                path.resolve(buildEnv.parsed.SERVER_RES_DIR, 'index.html'),
+                            ),
+                        ]),
+                ],
                 blocking: true,
             },
         }),

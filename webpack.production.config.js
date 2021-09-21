@@ -1,13 +1,15 @@
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackShellPluginNext = require('webpack-shell-plugin-next');
 const fs = require('fs');
 const util = require('util');
 const dotenv = require('dotenv');
 
+const commonConfig = require('./webpack.common.config');
+
 const copyFileAsync = util.promisify(fs.copyFile);
-const customEnv = dotenv.config();
+const buildEnv = dotenv.config({ path: '.build.env' });
 
 module.exports = {
     mode: 'production',
@@ -17,60 +19,42 @@ module.exports = {
         filename: 'build.js',
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js'],
-        alias: {
-            '@components': path.resolve(__dirname, 'src/components/'),
-            '@utils': path.resolve(__dirname, 'src/utils/'),
-            '@entity': path.resolve(__dirname, 'src/entity/'),
-            '@api': path.resolve(__dirname, 'src/api/'),
-            '@application': path.resolve(__dirname, 'src/application/'),
-            '@assets': path.resolve(__dirname, 'src/assets'),
-            '@colors.styl': path.resolve(__dirname, 'src/colors.styl'),
-            '@styleUtils.styl': path.resolve(__dirname, 'src/styleUtils.styl'),
-        },
+        ...commonConfig.resolve,
     },
     module: {
         rules: [
-            {
-                test: /\.(ts|tsx)$/,
-                loader: 'ts-loader',
-                exclude: /node_modules/,
-            },
+            ...commonConfig.module.rules,
             {
                 test: /\.styl$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader',
-                    'stylus-loader'
-                ],
+                use: [MiniCssExtractPlugin.loader, 'css-loader', 'stylus-loader'],
             },
-            {
-                test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|eot|ttf)$/,
-                type: 'asset/inline'
-            }
-        ]
+        ],
     },
     plugins: [
+        ...commonConfig.plugins,
         new MiniCssExtractPlugin({ filename: 'styles.css' }),
         new BundleAnalyzerPlugin({ analyzerMode: 'static' }),
         new WebpackShellPluginNext({
             onBuildEnd: {
-                scripts: [() => Promise.all([
-                    copyFileAsync(
-                        path.resolve(__dirname, 'static', 'build.js'),
-                        path.resolve(customEnv.parsed.SERVER_RES_DIR, 'build.js'),
-                    ),
-                    copyFileAsync(
-                        path.resolve(__dirname, 'static', 'index.prod.html'),
-                        path.resolve(customEnv.parsed.SERVER_RES_DIR, 'index.html'),
-                    ),
-                    copyFileAsync(
-                        path.resolve(__dirname, 'static', 'styles.css'),
-                        path.resolve(customEnv.parsed.SERVER_RES_DIR, 'styles.css'),
-                    ),
-                ])],
+                scripts: [
+                    () =>
+                        Promise.all([
+                            copyFileAsync(
+                                path.resolve(__dirname, 'static', 'build.js'),
+                                path.resolve(buildEnv.parsed.SERVER_RES_DIR, 'build.js'),
+                            ),
+                            copyFileAsync(
+                                path.resolve(__dirname, 'static', 'index.prod.html'),
+                                path.resolve(buildEnv.parsed.SERVER_RES_DIR, 'index.html'),
+                            ),
+                            copyFileAsync(
+                                path.resolve(__dirname, 'static', 'styles.css'),
+                                path.resolve(buildEnv.parsed.SERVER_RES_DIR, 'styles.css'),
+                            ),
+                        ]),
+                ],
                 blocking: true,
             },
         }),
     ],
-}
+};

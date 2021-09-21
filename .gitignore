@@ -4,3 +4,6 @@ node_modules
 static/build.js
 static/styles.css
 static/report.html
+
+.build.env
+.runtime.env
