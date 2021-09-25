@@ -51,7 +51,6 @@ export default class FetchUserApi implements BackendUserApi {
             url: '/api/user/login/verify',
             body: params,
         });
-        console.log('verifyLogin: ', result);
         const { RHex, user } = getApiValues(result, { RHex: 'string', user: 'object' });
         return { RHex, user: parseUser(user) as ActiveUser };
     }

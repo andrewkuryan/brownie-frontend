@@ -1,12 +1,15 @@
-import { arrayBufferToBase64, stringToArrayBuffer } from '@utils/transforms';
 import BackendApi, { BackendUserApi, FetchingRequest, FullRequest, Query } from './BackendApi';
 import FetchUserApi from './FetchUserApi';
 import FrontendSession from '@entity/Session';
+import { createSign, verifySign } from '@utils/crypto/ecdsa';
 
 export default class FetchBackendApi implements BackendApi {
     userApi: BackendUserApi;
 
-    constructor(private session: FrontendSession) {
+    constructor(
+        private readonly session: FrontendSession,
+        private readonly serverPublicKey: CryptoKey,
+    ) {
         this.userApi = new FetchUserApi(this);
     }
 
@@ -23,24 +26,18 @@ export default class FetchBackendApi implements BackendApi {
         }
     };
 
-    private signRequest = async (request: {
+    private signRequest = (request: {
         url: string;
         browserName: string;
         osName: string;
         method: string;
         body?: any;
-    }) => {
-        console.log('Request: ', request);
-        const signature = await window.crypto.subtle.sign(
-            {
-                name: 'ECDSA',
-                hash: 'SHA-512', // SHA-1, SHA-256, SHA-384, or SHA-512
-            },
-            this.session.privateKey,
-            stringToArrayBuffer(JSON.stringify(request)),
-        );
-        return arrayBufferToBase64(signature);
-    };
+    }) => createSign(this.session.privateKey, JSON.stringify(request));
+
+    private verifyRequest = (
+        result: { url: string; method: string; body?: any },
+        signature: string,
+    ) => verifySign(this.serverPublicKey, signature, JSON.stringify(result));
 
     private jsonRequest = async (method: string, { url, query, body }: FullRequest) => {
         const fullUrl = this.buildFullUrl(url, query);
@@ -48,11 +45,11 @@ export default class FetchBackendApi implements BackendApi {
             url: fullUrl,
             browserName: this.session.browserName,
             osName: this.session.osName,
-            method: method,
+            method,
             body,
         });
         return await fetch(fullUrl, {
-            method: method,
+            method,
             headers: {
                 'X-PublicKey': this.session.publicKey,
                 'X-BrowserName': this.session.browserName,
@@ -61,17 +58,24 @@ export default class FetchBackendApi implements BackendApi {
                 ...(body ? { 'Content-Type': 'application/json' } : {}),
             },
             ...(body ? { body: JSON.stringify(body) } : {}),
-        }).then(res => res.json());
+        }).then(async res => {
+            const body = await res.json();
+            const verifyResult = await this.verifyRequest(
+                { url: fullUrl, method, body },
+                res.headers.get('X-Signature') ?? '',
+            );
+            if (!verifyResult) {
+                throw new Error("Can't verify server response");
+            }
+            return body;
+        });
     };
 
-    get = async ({ url, query }: FetchingRequest) => this.jsonRequest('GET', { url, query });
+    get = async (request: FetchingRequest) => this.jsonRequest('GET', request);
 
-    post = async ({ url, query, body }: FullRequest) =>
-        this.jsonRequest('POST', { url, query, body });
+    post = async (request: FullRequest) => this.jsonRequest('POST', request);
 
-    put = async ({ url, query, body }: FullRequest) =>
-        this.jsonRequest('PUT', { url, query, body });
+    put = async (request: FullRequest) => this.jsonRequest('PUT', request);
 
-    delete = async ({ url, query }: FetchingRequest) =>
-        this.jsonRequest('DELETE', { url, query });
+    delete = async (request: FetchingRequest) => this.jsonRequest('DELETE', request);
 }

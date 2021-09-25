@@ -3,6 +3,10 @@ const { DefinePlugin } = require('webpack');
 const dotenv = require('dotenv');
 
 const runtimeEnv = dotenv.config({ path: '.runtime.env' });
+const buildEnv = dotenv.config({ path: '.build.env' });
+const generatedEnv = dotenv.config({
+    path: path.resolve(buildEnv.parsed.SERVER_RES_DIR, '.generated.env'),
+});
 
 module.exports = {
     resolve: {
@@ -36,6 +40,9 @@ module.exports = {
             SRP_N: JSON.stringify(runtimeEnv.parsed.SRP_N),
             SRP_NBitLen: JSON.stringify(runtimeEnv.parsed.SRP_NBitLen),
             SRP_g: JSON.stringify(runtimeEnv.parsed.SRP_g),
+            ECDSA_SERVER_PUBLIC_KEY: JSON.stringify(
+                generatedEnv.parsed.ECDSA_SERVER_PUBLIC_KEY,
+            ),
         }),
     ],
 };
