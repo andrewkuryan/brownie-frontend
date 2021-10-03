@@ -1,62 +1,78 @@
-import { FunctionalComponent } from 'preact';
-import { FormStructure } from '@components/form';
+import { FunctionalComponent, VNode } from 'preact';
+import { FormProps, FormStructure } from '@components/form';
 import { useState } from 'preact/hooks';
 
 import './input.styl';
 
 export interface InputProps {
-    promptText?: string;
+    placeholder?: string;
     maxLength?: number;
+    onPaste?: (event: ClipboardEvent) => void;
 }
 
-const Input: FunctionalComponent<InputProps> = ({ promptText, maxLength }) => {
-    return (
-        <input class="inputField" type="text" placeholder={promptText} maxLength={maxLength} />
-    );
+const Input: FunctionalComponent<InputProps> = inputProps => {
+    return <input class="inputField" type="text" {...inputProps} />;
 };
 
-export interface InputFormProps<T extends FormStructure> extends InputProps {
-    name: keyof T;
+export interface FormInputProps<T extends FormStructure> extends InputProps {
+    form: FormProps<T>;
+    name: Extract<keyof T, string>;
+    showErrorLabel?: boolean;
+    onFulfill?: () => void;
 }
 
-export function FormInput<T extends FormStructure>(): FunctionalComponent<InputFormProps<T>> {
-    return ({ name, promptText, maxLength }) => {
-        return (
+function FormInputTemplate<T extends FormStructure>({
+    type,
+    option,
+    form: { formId, onChange },
+    showErrorLabel = true,
+    ...inputProps
+}: FormInputProps<T> & { type: string; option?: VNode }) {
+    return (
+        <div id={`wrapper-${inputProps.name}-${formId}`} class="inputFieldWrapper">
             <input
+                id={`input-${inputProps.name}-${formId}`}
                 class="inputField"
-                type="text"
-                name={name.toString()}
-                placeholder={promptText}
-                maxLength={maxLength}
+                type={type}
+                form={formId}
+                onInput={ev =>
+                    onChange(inputProps.name, (ev.target as HTMLInputElement).value)
+                }
+                {...inputProps}
             />
-        );
-    };
+            {showErrorLabel && (
+                <div id={`error-${inputProps.name}-${formId}`} class="inputError">
+                    <span class="errorLabel" />
+                    <div class="tooltipWrapper">
+                        <span class="tooltip" />
+                        <span class="tooltipArrow" />
+                    </div>
+                </div>
+            )}
+            {option}
+        </div>
+    );
 }
 
-export function FormPasswordInput<T extends FormStructure>(): FunctionalComponent<
-    InputFormProps<T>
-> {
-    return ({ name, promptText, maxLength }) => {
-        const [type, setType] = useState<'text' | 'password'>('password');
+export function FormInput<T extends FormStructure>(inputProps: FormInputProps<T>) {
+    return <FormInputTemplate type={'text'} {...inputProps} />;
+}
 
-        return (
-            <div class="passwordFieldWrapper">
-                <input
-                    class="inputField"
-                    type={type}
-                    name={name.toString()}
-                    placeholder={promptText}
-                    maxLength={maxLength}
-                />
+export function FormPasswordInput<T extends FormStructure>(inputProps: FormInputProps<T>) {
+    const [type, setType] = useState<'text' | 'password'>('password');
+
+    return (
+        <FormInputTemplate
+            type={type}
+            option={
                 <span
                     class={`passwordToggle ${type}`}
-                    onClick={() => {
-                        setType(type === 'text' ? 'password' : 'text');
-                    }}
+                    onClick={() => setType(type === 'text' ? 'password' : 'text')}
                 />
-            </div>
-        );
-    };
+            }
+            {...inputProps}
+        />
+    );
 }
 
 export default Input;

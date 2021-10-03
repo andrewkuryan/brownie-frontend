@@ -1,8 +1,15 @@
 import { FunctionalComponent } from 'preact';
 import { useState } from 'preact/hooks';
-import Input from '@components/input';
-import Button from '@components/button';
+import { FormInput } from '@components/input';
+import Button, { SubmitButton } from '@components/button';
 import { GuestUser, User } from '@entity/User';
+import Form, { useForm } from '@components/form';
+import {
+    isNonZeroLength,
+    shouldBeNotEmpty,
+    shouldMatchRegex,
+    withConditions,
+} from '@components/form/validators';
 
 import '../commonStep.styl';
 import './contactsStep.styl';
@@ -10,12 +17,31 @@ import telegramIcon from '@assets/telegram_icon_136124_white.svg';
 import copyIcon from '@assets/content_copy_white_48dp.svg';
 
 const EmailContactOption: FunctionalComponent<{ selected: boolean }> = ({ selected }) => {
+    const { formProps } = useForm({
+        structure: { email: 'string' },
+        inputValidators: {
+            email: {
+                realtimeValidate: withConditions(
+                    shouldMatchRegex(
+                        /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
+                        'Invalid email address',
+                    ),
+                    isNonZeroLength,
+                ),
+                submitValidate: shouldBeNotEmpty(),
+            },
+        },
+        onSubmit: () => {},
+    });
+
     return (
         <div class={`emailOptionRoot ${selected ? 'selected' : ''}`}>
             <p class="emailLabel">Enter your email address:</p>
             <div class="emailInputWrapper">
-                <Input promptText="example: test@test.com" />
-                <Button text="Confirm" onClick={() => {}} />
+                <Form formProps={formProps}>
+                    <FormInput form={formProps} name={'email'} placeholder="Email address" />
+                    <SubmitButton form={formProps} text="Confirm" />
+                </Form>
             </div>
         </div>
     );

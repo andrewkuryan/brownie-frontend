@@ -43,7 +43,14 @@
   .emailOptionRoot
     margin-top 60px
     width 80%
-    grid-area 1 / 1 / 1 / 1;
+    grid-area 1 / 1 / 1 / 1
+    opacity 0
+    transition opacity 0.2s ease-in-out
+    background-color white
+    z-index 12
+    &.selected
+      opacity 1
+      z-index 15
     .emailLabel
       margin 0 0 20px 0
       font-size 22px
@@ -52,22 +59,21 @@
       width 100%
       display flex
       flex-direction row
-      .inputField
+      .inputFieldWrapper
         flex 1
       .buttonRoot
         margin-left 24px
   .tgOptionRoot
     width 80%
     margin-top 60px
-    transform-origin 100%
     grid-area 1 / 1 / 1 / 1;
-    transform scaleX(0)
     opacity 0
-    transition transform 0.2s ease-in-out, opacity 0.2s ease-in-out
+    transition opacity 0.2s ease-in-out
     background-color white
+    z-index 11
     &.selected
-      transform scaleX(1)
       opacity 1
+      z-index 15
     .description
       font-size 22px
       font-weight bold

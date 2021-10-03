@@ -1,42 +1,73 @@
 import { FunctionalComponent } from 'preact';
-import { useForm } from '@components/form';
+import Form, { useForm } from '@components/form';
+import { FormInput, FormPasswordInput } from '@components/input';
+import { SubmitButton } from '@components/button';
+import {
+    isNonZeroLength,
+    shouldBeAtLeastN,
+    shouldBeNotEmpty,
+    withConditions,
+} from '@components/form/validators';
 import { ReduxProps } from '../../../../Main';
 
 import '../commonStep.styl';
 import './fulfillStep.styl';
 
 const FulfillStepView: FunctionalComponent<ReduxProps> = ({ dispatch }) => {
-    const { Form, Input, Password, Button } = useForm({
-        login: { type: 'string' },
-        password: { type: 'string' },
-        passwordConfirm: { type: 'string' },
+    const { formProps } = useForm({
+        structure: {
+            login: 'string',
+            password: 'string',
+            passwordConfirm: 'string',
+        },
+        inputValidators: {
+            login: {
+                submitValidate: shouldBeNotEmpty(),
+            },
+            password: {
+                submitValidate: shouldBeNotEmpty(),
+                realtimeValidate: withConditions(shouldBeAtLeastN(5), isNonZeroLength),
+            },
+            passwordConfirm: {
+                submitValidate: shouldBeNotEmpty(),
+                realtimeValidate: withConditions(shouldBeAtLeastN(5), isNonZeroLength),
+            },
+        },
+        realtimeValidate: values => {
+            if (values.password !== values.passwordConfirm) {
+                return [
+                    { name: 'password', text: 'Passwords do not match' },
+                    { name: 'passwordConfirm', text: 'Passwords do not match' },
+                ];
+            }
+            return [];
+        },
+        onSubmit: values => {
+            dispatch({ type: 'USER/FULFILL', payload: values });
+        },
     });
 
     return (
-        <Form
-            onSubmit={values => {
-                dispatch({ type: 'USER/FULFILL', payload: values });
-            }}
-        >
-            <div class="commonStepRoot fulfillStepRoot">
-                <h2>Fill in the rest of the data</h2>
+        <div class="commonStepRoot fulfillStepRoot">
+            <h2>Fill in the rest of the data</h2>
+            <Form formProps={formProps}>
                 <div class="inputsBlock">
                     <div class="inputWrapper">
                         <p>Login</p>
-                        <Input name={'login'} />
+                        <FormInput form={formProps} name={'login'} />
                     </div>
                     <div class="inputWrapper">
-                        <p>Password *</p>
-                        <Password name={'password'} />
+                        <p>Password</p>
+                        <FormPasswordInput form={formProps} name={'password'} />
                     </div>
                     <div class="inputWrapper">
-                        <p>Confirm Password *</p>
-                        <Password name={'passwordConfirm'} />
+                        <p>Confirm Password</p>
+                        <FormPasswordInput form={formProps} name={'passwordConfirm'} />
                     </div>
                 </div>
-                <Button text={'Confirm'} />
-            </div>
-        </Form>
+                <SubmitButton form={formProps} text={'Confirm'} />
+            </Form>
+        </div>
     );
 };
 

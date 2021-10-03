@@ -1,7 +1,10 @@
 import { FunctionalComponent } from 'preact';
 import { ReduxProps } from '../../../../Main';
 import { UnconfirmedUserContact } from '@entity/Contact';
-import { useForm } from '@components/form';
+import Form, { useForm } from '@components/form';
+import { FormInput } from '@components/input';
+import { SubmitButton } from '@components/button';
+import { isNonZeroLength, shouldBeANumber, withConditions } from '@components/form/validators';
 
 import '../commonStep.styl';
 import './verifyStep.styl';
@@ -14,45 +17,73 @@ const VerifyStepView: FunctionalComponent<VerifyStepViewProps & ReduxProps> = ({
     dispatch,
     contact,
 }) => {
-    const { Form, Input, Button } = useForm({
-        'digit-1': { type: 'string' },
-        'digit-2': { type: 'string' },
-        'digit-3': { type: 'string' },
-        'digit-4': { type: 'string' },
-        'digit-5': { type: 'string' },
-        'digit-6': { type: 'string' },
+    const keyArray: Array<
+        'digit-1' | 'digit-2' | 'digit-3' | 'digit-4' | 'digit-5' | 'digit-6'
+    > = ['digit-1', 'digit-2', 'digit-3', 'digit-4', 'digit-5', 'digit-6'];
+    const { formProps, setInputValue, setFocus } = useForm({
+        structure: {
+            'digit-1': 'string',
+            'digit-2': 'string',
+            'digit-3': 'string',
+            'digit-4': 'string',
+            'digit-5': 'string',
+            'digit-6': 'string',
+        },
+        inputValidators: keyArray.reduce(
+            (prev, cur) => ({
+                ...prev,
+                [cur]: {
+                    realtimeValidate: withConditions(shouldBeANumber(), isNonZeroLength),
+                    submitValidate: shouldBeANumber(),
+                },
+            }),
+            {},
+        ),
+        onSubmit: values => {
+            const verificationCode = Object.values(values).reduce(
+                (prev, current) => prev + current,
+                '',
+            );
+            dispatch({
+                type: 'USER/VERIFY_CONTACT',
+                payload: { contact, verificationCode },
+            });
+        },
     });
 
     return (
-        <Form
-            onSubmit={values => {
-                const verificationCode = Object.values(values).reduce(
-                    (prev, current) => prev + current,
-                    '',
-                );
-                dispatch({
-                    type: 'USER/VERIFY_CONTACT',
-                    payload: { contact, verificationCode },
-                });
-            }}
-        >
-            <div class="commonStepRoot verifyStepRoot">
-                <h2>Verify your contact information</h2>
+        <div class="commonStepRoot verifyStepRoot">
+            <h2>Verify your contact information</h2>
+            <Form formProps={formProps}>
                 <div class="inputBlock">
                     <p>Enter the verification code you received:</p>
                     <div class="codeInputWrapper">
-                        {([1, 2, 3, 4, 5, 6] as Array<1 | 2 | 3 | 4 | 5 | 6>).map(i => (
-                            <Input
-                                name={`digit-${i}`}
+                        {keyArray.map((digit, i) => (
+                            <FormInput
+                                form={formProps}
+                                name={digit}
                                 maxLength={1}
-                                promptText={i.toString()}
+                                showErrorLabel={false}
+                                onPaste={e => {
+                                    for (let index = i; index < keyArray.length; index++) {
+                                        setInputValue(
+                                            keyArray[index],
+                                            e.clipboardData?.getData('text')[index - i] ?? '',
+                                        );
+                                    }
+                                }}
+                                onFulfill={() => {
+                                    if (i < keyArray.length - 1) {
+                                        setFocus(keyArray[i + 1]);
+                                    }
+                                }}
                             />
                         ))}
                     </div>
                 </div>
-                <Button text="Verify" />
-            </div>
-        </Form>
+                <SubmitButton form={formProps} text="Verify" />
+            </Form>
+        </div>
     );
 };
 

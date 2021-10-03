@@ -1,33 +1,102 @@
 @import "@colors.styl"
 @import "@styleUtils.styl"
 
-.inputField
+.inputError
+  display flex
+  visibility hidden
+  opacity 0
+  position relative
+  justify-content center
+  align-items center
+  margin-right 6px
+  z-index 11
+  transition opacity 0.3s ease-in-out, visibility 0.3s ease-in-out
+  &.active
+    visibility visible
+    opacity 1
+  .errorLabel
+    width 26px
+    height 26px
+    background-repeat no-repeat
+    background-position center
+    background-size 100% 100%
+    background-image url("@assets/warning_amber_black_48dp.svg")
+
+  &:hover
+    .tooltipWrapper
+      visibility visible
+      opacity 1
+
+  .tooltipWrapper
+    display flex
+    visibility hidden
+    opacity 0
+    align-items flex-end
+    justify-content center
+    flex-direction column
+    position absolute
+    padding 10px
+    background-color transparent
+    right -18px
+    margin-bottom -8px
+    bottom 100%
+    transition opacity 0.3s ease-in-out, visibility 0.3s ease-in-out
+    .tooltip
+      width 120px
+      background-color red
+      color #fff
+      text-align left
+      padding 5px 7px
+      border-radius 4px
+      margin 0
+      box-shadow 0 0 5px rgba(red, 0.8)
+      hr
+        height 1px
+        border none
+        background-color white
+        margin-block-start 5px
+        margin-block-end 5px
+    .tooltipArrow
+      width 8px
+      height 8px
+      background-color red
+      transform rotate(45deg)
+      margin-top -4px
+      box-shadow 0 0 5px rgba(red, 0.8)
+      margin-right 17px
+
+.inputFieldWrapper
+  position relative
+  display flex
+  flex-direction row
+  align-items center
   height 34px
   border-radius 4px
   box-sizing border-box
   border 1px solid lightGray
   padding 0 8px
   font-size 18px
-  box-shadow 0 0 3px rgba(primeGreen, 0.0)
-  transition box-shadow 0.3s ease-in-out
-  +placeholderStyle()
-    color veryLightGray
-    opacity 0.6
-    font-size 16px
+  z-index 10
+  blurAround()
+  .inputField
+    flex 1
+    z-index 11
+    border none
+    padding 0
+    &:focus
+      outline none
+  &:focus-within
+    &::after
+      opacity 1
+  &.error
+    &::after
+      opacity 1
+      box-shadow 0 0 5px rgba(red, 0.8)
 
-  &:focus
-    border-color primeGreen
-    box-shadow 0 0 3px rgba(primeGreen, 0.6)
-    outline none
-
-.passwordFieldWrapper
-  position relative
   .passwordToggle
+    z-index 11
     width 26px
     height 26px
-    position absolute
-    right 8px
-    top 4px
     background-repeat no-repeat
     background-position center
     background-size 100% 100%

@@ -1,24 +1,40 @@
 import { FunctionalComponent } from 'preact';
 import { ReduxProps } from '../../Main';
+import Form, { useForm } from '@components/form';
+import { FormInput, FormPasswordInput } from '@components/input';
+import { SubmitButton } from '@components/button';
+
+import './login.styl';
 
 const LoginView: FunctionalComponent<ReduxProps> = ({ dispatch }) => {
-    const onLogin = async (e: Event) => {
-        e.preventDefault();
-        const login = (document.getElementById('username_log') as HTMLInputElement).value;
-        const password = (document.getElementById('password_log') as HTMLInputElement).value;
-        dispatch({ type: 'USER/LOGIN', payload: { login, password } });
-    };
+    const { formProps } = useForm({
+        structure: {
+            login: 'string',
+            password: 'string',
+        },
+        onSubmit: ({ login, password }) => {
+            console.log(login, password);
+        },
+    });
 
     return (
-        <div>
-            <div>
-                <h2>Login</h2>
-                <label>Username</label>
-                <input id="username_log" type="text" />
-                <label>Password</label>
-                <input id="password_log" type="password" />
-                <button onClick={onLogin}>Login</button>
-            </div>
+        <div class="loginRoot">
+            <Form formProps={formProps}>
+                <div class="loginCard">
+                    <h2>Login</h2>
+                    <div>
+                        <div>
+                            <p>Login</p>
+                            <FormInput form={formProps} name={'login'} />
+                        </div>
+                        <div>
+                            <p>Password</p>
+                            <FormPasswordInput form={formProps} name={'password'} />
+                        </div>
+                    </div>
+                    <SubmitButton form={formProps} text={'Confirm'} />
+                </div>
+            </Form>
         </div>
     );
 };

@@ -1,5 +1,5 @@
 import { FunctionalComponent, VNode } from 'preact';
-import { FormStructure } from '@components/form';
+import { FormProps, FormStructure } from '@components/form';
 
 import './button.styl';
 
@@ -24,17 +24,22 @@ const Button: FunctionalComponent<ButtonProps> = ({ text, onClick, graphics, lin
     );
 };
 
-export type ButtonFormProps = Omit<ButtonProps, 'link' | 'onClick'>;
+export type ButtonFormProps<T extends FormStructure> = Omit<
+    ButtonProps,
+    'link' | 'onClick'
+> & { form: FormProps<T> };
 
-export function FormButton<T extends FormStructure>(): FunctionalComponent<ButtonFormProps> {
-    return ({ text, graphics }) => {
-        return (
-            <button type="submit" class="buttonRoot">
-                {text}
-                {graphics}
-            </button>
-        );
-    };
+export function SubmitButton<T extends FormStructure>({
+    text,
+    graphics,
+    form,
+}: ButtonFormProps<T>) {
+    return (
+        <button type="submit" class="buttonRoot" form={form.formId}>
+            {text}
+            {graphics}
+        </button>
+    );
 }
 
 export default Button;
