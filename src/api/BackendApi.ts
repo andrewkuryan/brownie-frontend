@@ -1,5 +1,5 @@
 import { ActiveUser, User } from '@entity/User';
-import { UserContact } from '@entity/Contact';
+import { ActiveUserContact, UnconfirmedUserContact, UserContact } from '@entity/Contact';
 
 export type Query = { [_: string]: string };
 export type FullRequest = { url: string; query?: Query; body?: any };
@@ -44,7 +44,8 @@ export interface VerifyLoginResponse {
 
 export interface BackendUserApi {
     getUser: () => Promise<User>;
-    verifyContact: (contact: UserContact, verificationCode: string) => Promise<UserContact>;
+    addEmail: (emailAddress: string) => Promise<UnconfirmedUserContact>;
+    verifyContact: (contact: UserContact, verificationCode: string) => Promise<ActiveUserContact>;
     fulfillUser: (params: FulfillUserParams) => Promise<ActiveUser>;
     initLogin: (params: InitLoginParams) => Promise<InitLoginResponse>;
     verifyLogin: (params: VerifyLoginParams) => Promise<VerifyLoginResponse>;

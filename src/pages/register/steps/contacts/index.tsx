@@ -15,8 +15,12 @@ import '../commonStep.styl';
 import './contactsStep.styl';
 import telegramIcon from '@assets/telegram_icon_136124_white.svg';
 import copyIcon from '@assets/content_copy_white_48dp.svg';
+import { ReduxProps } from '../../../../Main';
 
-const EmailContactOption: FunctionalComponent<{ selected: boolean }> = ({ selected }) => {
+const EmailContactOption: FunctionalComponent<{ selected: boolean } & ReduxProps> = ({
+    selected,
+    dispatch,
+}) => {
     const { formProps } = useForm({
         structure: { email: 'string' },
         inputValidators: {
@@ -31,7 +35,9 @@ const EmailContactOption: FunctionalComponent<{ selected: boolean }> = ({ select
                 submitValidate: shouldBeNotEmpty(),
             },
         },
-        onSubmit: () => {},
+        onSubmit: ({ email }) => {
+            dispatch({ type: 'USER/ADD_EMAIL', payload: { emailAddress: email } });
+        },
     });
 
     return (
@@ -82,7 +88,11 @@ export interface ContactsStepViewProps {
     user: GuestUser;
 }
 
-const ContactsStepView: FunctionalComponent<ContactsStepViewProps> = ({ user }) => {
+const ContactsStepView: FunctionalComponent<ContactsStepViewProps & ReduxProps> = ({
+    user,
+    dispatch,
+    useStore,
+}) => {
     const [selectedOption, setSelectedOption] = useState<'email' | 'tg'>('email');
 
     return (
@@ -103,7 +113,11 @@ const ContactsStepView: FunctionalComponent<ContactsStepViewProps> = ({ user }) 
                 />
             </div>
             <div class="optionContent">
-                <EmailContactOption selected={selectedOption === 'email'} />
+                <EmailContactOption
+                    selected={selectedOption === 'email'}
+                    dispatch={dispatch}
+                    useStore={useStore}
+                />
                 <TgContactOption selected={selectedOption === 'tg'} user={user} />
             </div>
         </div>

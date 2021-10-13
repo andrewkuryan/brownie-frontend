@@ -5,6 +5,7 @@ import {
     LoginAction,
     LoadUserAction,
     VerifyContactAction,
+    AddEmailContactAction,
 } from '@application/user/UserActions';
 import { ActiveUser, BlankUser } from '@entity/User';
 import SrpGenerator from '@utils/crypto/srp';
@@ -19,6 +20,17 @@ export const loadUserMiddleware = (api: BackendApi) =>
             );
         return action;
     });
+
+export const addEmailMiddleware = (api: BackendApi) =>
+    middlewareForActionType<AddEmailContactAction>(
+        'USER/ADD_EMAIL',
+        (middlewareApi, action) => {
+            api.userApi.addEmail(action.payload.emailAddress).then(result => {
+                console.log(result);
+            });
+            return action;
+        },
+    );
 
 export const verifyContactMiddleware = (api: BackendApi) =>
     middlewareForActionType<VerifyContactAction>(

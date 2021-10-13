@@ -22,6 +22,8 @@ export const userReducer: Reducer<UserState, UserAction> = (
             return { ...state, currentUser: action.payload };
         case 'USER/LOAD':
             return state;
+        case 'USER/ADD_EMAIL':
+            return state;
         case 'USER/VERIFY_CONTACT':
             return state;
         case 'USER/FULFILL':

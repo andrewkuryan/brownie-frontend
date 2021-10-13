@@ -14,6 +14,7 @@ import {
     loginMiddleware,
     loadUserMiddleware,
     verifyContactMiddleware,
+    addEmailMiddleware,
 } from '@application/user/UserMiddleware';
 import { useStore } from '@utils/redux';
 import SrpGenerator from '@utils/crypto/srp';
@@ -53,6 +54,7 @@ export const MainView: FunctionComponent = () => {
                 defaultAppState,
                 applyMiddleware(
                     loadUserMiddleware(api),
+                    addEmailMiddleware(api),
                     verifyContactMiddleware(api),
                     fulfillUserMiddleware(api, srpGenerator),
                     loginMiddleware(api, srpGenerator),

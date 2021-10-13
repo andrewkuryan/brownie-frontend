@@ -13,7 +13,7 @@ const LoginView: FunctionalComponent<ReduxProps> = ({ dispatch }) => {
             password: 'string',
         },
         onSubmit: ({ login, password }) => {
-            console.log(login, password);
+            dispatch({ type: 'USER/LOGIN', payload: { login, password } });
         },
     });
 

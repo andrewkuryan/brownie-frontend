@@ -6,10 +6,15 @@ import FulfillStepView from './steps/fulfill';
 import DoneStepView from './steps/done';
 import { ReduxProps } from '../../Main';
 import Stepper from '@components/stepper';
+import Button from '@components/button';
 import { ActiveUser, BlankUser, GuestUser } from '@entity/User';
 import { ActiveUserContact, UnconfirmedUserContact } from '@entity/Contact';
 
 import './register.styl';
+import arrowForwardActive from '@assets/arrow_forward_ios_green.svg';
+import arrowForwardDisabled from '@assets/arrow_forward_ios_grey.svg';
+import arrowBackActive from '@assets/arrow_back_ios_green.svg';
+import arrowBackDisabled from '@assets/arrow_back_ios_grey.svg';
 
 const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => {
     const currentUser = useStore(state => state.user.currentUser);
@@ -42,9 +47,25 @@ const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => 
     return (
         <div class="registerRoot">
             <div class="stepCard">
+                <div class="stepNavigation">
+                    <Button
+                        text=""
+                        graphics={<img src={arrowBackDisabled} alt="‹" />}
+                        onClick={() => {}}
+                    />
+                    <Button
+                        text=""
+                        graphics={<img src={arrowForwardActive} alt="›" />}
+                        onClick={() => {}}
+                    />
+                </div>
                 <div class="stepContent">
                     {currentStep === 'contact' ? (
-                        <ContactsStepView user={currentUser as GuestUser} />
+                        <ContactsStepView
+                            user={currentUser as GuestUser}
+                            useStore={useStore}
+                            dispatch={dispatch}
+                        />
                     ) : currentStep === 'verifyContact' ? (
                         <VerifyStepView
                             contact={

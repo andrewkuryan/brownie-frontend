@@ -6,7 +6,7 @@ import './loading.styl';
 const LoadingView: FunctionComponent = () => {
     return (
         <div class="loadingRoot">
-            <ProgressIndicator />
+            <ProgressIndicator size={'large'}/>
         </div>
     );
 };
