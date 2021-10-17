@@ -1,12 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Brownie</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-</head>
-<body>
-    <script src="build.js"></script>
-    <link href="styles.css" rel="stylesheet">
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Brownie</title>
+        <style>
+            @font-face {
+                font-family: Roboto;
+                font-style: normal;
+                font-weight: 400;
+                src: url(data:application/octet-stream;base64,d09GMgABAAAAAATkAA4AAAAACHwAAASSAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGigbgWAcNAZgAHQRDAqGFIRrCxwAATYCJAM0BCAFgnQHIBvIBsgEHoBt+Q8EA1EvVsGyw/Oy3f5fRXg/WbUuq/j7uVUsNK+aErXs3jbsM9SsJot40gQhQmmE3FFgbuzmCiFTjoBIATjkjGFAKi//HyCkIAT2XIWK1Edq2rxtV/IMyUiMJo8n0R0FQfSg5FgjUgfyH0lRlDsxFquEm0jqtVTAikjLWulM+mOpbyLEZmO8UH1ibLvgSox9hBoJ/tylnC4EbIiY/l5QasGKDWWWLhH7OER5n6sz5afMCJgYSgIlr41bmcqyCshrw/pAyzdJ44QZyAjIi+QqtKagGzSdI2xw+QQwKEdAVYKmt1Fr8dUtOnRoQUMwfpn5/WkNsywS0RCWd15aW9bR0GYHzcFF2WYOYEsMREGr3q3RmGa0oBVt6UBneswqo9GIpjms9lcY94yA4Tf2GXuN3cYuY4exZV+GaLA/NGvIMHCRTAesWxXMKE/CIrStq5PawAnALZHrajH2JqvJZbWpiqpJZiXE6bKFep09Fa89Q0l19Ld7HZMvMeJi10v2BiVScky+IoxWB9PBkZcVtewT7l3rxoird7tmWu2TbwjCyOvdvU7JRZA3GKfo8l68q0y6f727MPqJY/K9bsp1ddLVnoy4Zp98pYtJFVwOxWsfUjNp9yqZ1jEzNrt3xNUGu0beeGCffO8a3UdfVyZd7coX3eiRpkrKoDCpcARK6kyauquebj289gxLmK5kdu/6Dfa654YNnuA9XPiQ7it8ST+0MfebLz6ykPWbr14f8IclLRlSOkWbsH3EwV93ntb0qfXGLZqUaSnQYGHhP+YNj06fHD09X82XLd5bZP2yahztd3pZteJrDwiOaiEpx29/DjW6fX0ackmgvrgyTbq1dCn318xeduFiGu38+1pFWMP1jaHr5lURjv/ZqnJEjofZnxa45K+mFQ4cdkLapzvavuiVFVq26LQkiDQ/su4nYsnGpUnIeoCOIwiUuzh4cABZD5T76PHso+OsrMvT61vW6//YfLNqCqcizs9spPz1z/+Kb3rDS3sF05lsu7aezSZ+ivpxvsCOnSec4k/2tu3eLoCs3/9svXN5wqxjoyp1i1BPz3xWYrpv9rDxK6bPpzj3j+fdV/KfENPXVcGzv5b4v8ABZ5GHgRzZ9f9DDhbLEZsjNjS52P85ZN0PPMAdYpGQT79SOg5w1f1kzW3NCh58G1zeXXtJ6Pzxe95fl2wVrUmgbO+KJvzYEv1bBVur73l/t7ZVvNCXOkxTGCr8ALkm+aQfZMkNyJKmkM8kkSmWY5vUnix5M1nyCFKlV/gsuanXQ6WD6eSg63ehT0PmuNNK2HM0SDbW0x89lAqorJGKOJk3b8qblyCVKU681Ew+uqqczG4IJ5lk4qlNBSqQpifKM4h49p4hhOOmPHEk4qEC0UQwBDexJLEY1legLa1oQjPa0wXry1GZ8lSkM3EMBj35knJ0xo2HFKIZRCLdcaM1iQjiiEWrXVqJKtSgToxecVkNeaCv7U2II54MEonAM3N5i3WV0GhBHHF42G1uNFoRyxDKf6dU0aRPozOJkmKwAphLZSpuhlL+a+3AiCRHaQ==)
+                    format('woff2');
+            }
+            body,
+            html {
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                font-family: Roboto, sans-serif;
+            }
+            #app {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            #app p {
+                margin: 50px 0 0;
+                color: #2a6438;
+                font-size: 32px;
+                font-weight: 700;
+                text-shadow: 0 0 8px rgba(42, 100, 56, 0.8);
+                animation: loadingText 2s infinite;
+            }
+            .progressIndicator {
+                width: 112px;
+                height: 112px;
+                position: relative;
+                transform: rotate(45deg);
+            }
+            .progressIndicatorLine {
+                position: absolute;
+                border-radius: 4px;
+            }
+            .progressIndicatorLineShadow {
+                position: absolute;
+                background-color: transparent;
+            }
+            @keyframes loadingText {
+                0%,
+                100% {
+                    text-shadow: 0 0 2px rgba(42, 100, 56, 0.8);
+                }
+                50% {
+                    text-shadow: 0 0 8px rgba(42, 100, 56, 0.8);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <div class="progressIndicator"></div>
+            <p>LOADING BROWNIE</p>
+        </div>
+        <script defer="defer" src="progressIndicator.js"></script>
+        <script async src="build.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                (window.brownieProgressIndicatorActive = !1),
+                    (window.startBrownieIndicator = progressIndicator.startIndicator),
+                    (window.stopBrownieIndicator = progressIndicator.stopIndicator),
+                    progressIndicator.startIndicator(
+                        112,
+                        8,
+                        2,
+                        225,
+                        [19, 31, 11, 29, 23],
+                        document.getElementsByClassName('progressIndicator')[0],
+                    );
+            });
+            const css = document.createElement('link');
+            (css.rel = 'stylesheet'),
+                (css.href = 'styles.css'),
+                document.head.insertBefore(
+                    css,
+                    document.head.childNodes[document.head.childNodes.length - 1].nextSibling,
+                );
+        </script>
+    </body>
 </html>

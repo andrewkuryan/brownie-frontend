@@ -2,6 +2,7 @@ node_modules
 .idea
 
 static/build.js
+static/progressIndicator.js
 static/styles.css
 static/report.html
 

@@ -1,6 +1,10 @@
 const path = require('path');
 const { DefinePlugin } = require('webpack');
 const dotenv = require('dotenv');
+const fs = require('fs');
+const util = require('util');
+
+const copyFileAsync = util.promisify(fs.copyFile);
 
 const runtimeEnv = dotenv.config({ path: '.runtime.env' });
 const buildEnv = dotenv.config({ path: '.build.env' });
@@ -45,4 +49,15 @@ module.exports = {
             ),
         }),
     ],
+    onBuildEndScripts: () =>
+        Promise.all([
+            copyFileAsync(
+                path.resolve(__dirname, 'static', 'build.js'),
+                path.resolve(buildEnv.parsed.SERVER_RES_DIR, 'build.js'),
+            ),
+            copyFileAsync(
+                path.resolve(__dirname, 'static', 'favicon.ico'),
+                path.resolve(buildEnv.parsed.SERVER_RES_DIR, 'favicon.ico'),
+            ),
+        ]),
 };

@@ -34,16 +34,19 @@ module.exports = {
             onBuildEnd: {
                 scripts: [
                     () =>
-                        Promise.all([
-                            copyFileAsync(
-                                path.resolve(__dirname, 'static', 'build.js'),
-                                path.resolve(buildEnv.parsed.SERVER_RES_DIR, 'build.js'),
+                        commonConfig
+                            .onBuildEndScripts()
+                            .then(() =>
+                                Promise.all([
+                                    copyFileAsync(
+                                        path.resolve(__dirname, 'static', 'index.dev.html'),
+                                        path.resolve(
+                                            buildEnv.parsed.SERVER_RES_DIR,
+                                            'index.html',
+                                        ),
+                                    ),
+                                ]),
                             ),
-                            copyFileAsync(
-                                path.resolve(__dirname, 'static', 'index.dev.html'),
-                                path.resolve(buildEnv.parsed.SERVER_RES_DIR, 'index.html'),
-                            ),
-                        ]),
                 ],
                 blocking: true,
             },
