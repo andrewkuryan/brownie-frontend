@@ -48,7 +48,7 @@ export default class FetchBackendApi implements BackendApi {
             method,
             body,
         });
-        return await fetch(fullUrl, {
+        return fetch(fullUrl, {
             method,
             headers: {
                 'X-PublicKey': this.session.publicKey,
@@ -59,15 +59,20 @@ export default class FetchBackendApi implements BackendApi {
             },
             ...(body ? { body: JSON.stringify(body) } : {}),
         }).then(async res => {
-            const body = await res.json();
-            const verifyResult = await this.verifyRequest(
-                { url: fullUrl, method, body },
-                res.headers.get('X-Signature') ?? '',
-            );
-            if (!verifyResult) {
-                throw new Error("Can't verify server response");
+            if (res.ok) {
+                const body = await res.json();
+                const verifyResult = await this.verifyRequest(
+                    { url: fullUrl, method, body },
+                    res.headers.get('X-Signature') ?? '',
+                );
+                if (!verifyResult) {
+                    throw new Error("Can't verify server response");
+                }
+                return body;
+            } else {
+                const errorText = await res.text();
+                throw new Error(errorText);
             }
-            return body;
         });
     };
 

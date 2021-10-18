@@ -10,6 +10,19 @@ export interface ButtonProps {
     link?: string;
 }
 
+export const OutlineButton: FunctionalComponent<Omit<ButtonProps, 'link'>> = ({
+    text,
+    onClick,
+    graphics,
+}) => {
+    return (
+        <button class="outlineButtonRoot" onClick={onClick}>
+            {text}
+            {graphics}
+        </button>
+    );
+};
+
 const Button: FunctionalComponent<ButtonProps> = ({ text, onClick, graphics, link }) => {
     return link === undefined ? (
         <button class="buttonRoot" onClick={onClick}>

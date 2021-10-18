@@ -3,6 +3,7 @@ import { UserContact } from '@entity/Contact';
 
 export type UserAction =
     | SetUserAction
+    | AddUserContactAction
     | LoadUserAction
     | AddEmailContactAction
     | VerifyContactAction
@@ -10,6 +11,7 @@ export type UserAction =
     | LoginAction;
 
 export type SetUserAction = { type: 'USER/SET_USER'; payload: User | null };
+export type AddUserContactAction = { type: 'USER/ADD_CONTACT'; payload: UserContact };
 export type LoadUserAction = { type: 'USER/LOAD' };
 export type AddEmailContactAction = {
     type: 'USER/ADD_EMAIL';
