@@ -15,8 +15,10 @@ export interface VerifyStepViewProps {
 
 const VerifyStepView: FunctionalComponent<VerifyStepViewProps & ReduxProps> = ({
     dispatch,
+    useStore,
     contact,
 }) => {
+    const isProcessing = useStore(state => state.isProcessing, 'VerifyStepView');
     const keyArray: Array<
         'digit-1' | 'digit-2' | 'digit-3' | 'digit-4' | 'digit-5' | 'digit-6'
     > = ['digit-1', 'digit-2', 'digit-3', 'digit-4', 'digit-5', 'digit-6'];
@@ -81,7 +83,7 @@ const VerifyStepView: FunctionalComponent<VerifyStepViewProps & ReduxProps> = ({
                         ))}
                     </div>
                 </div>
-                <SubmitButton form={formProps} text="Verify" />
+                <SubmitButton form={formProps} text="Verify" isProcessing={isProcessing} />
             </Form>
         </div>
     );

@@ -9,7 +9,7 @@ export interface ButtonProps {
     onClick: () => void;
     graphics?: VNode<any>;
     link?: string;
-    isLoading?: boolean;
+    isProcessing?: boolean;
 }
 
 export const OutlineButton: FunctionalComponent<Omit<ButtonProps, 'link'>> = ({
@@ -30,11 +30,11 @@ const Button: FunctionalComponent<ButtonProps> = ({
     onClick,
     graphics,
     link,
-    isLoading,
+    isProcessing,
 }) => {
     return link === undefined ? (
         <button class="buttonRoot" onClick={onClick}>
-            <ProcessIndicator isActive={isLoading ?? false} />
+            <ProcessIndicator isActive={isProcessing ?? false} />
             <>
                 {text}
                 {graphics}
@@ -57,11 +57,11 @@ export function SubmitButton<T extends FormStructure>({
     text,
     graphics,
     form,
-    isLoading,
+    isProcessing,
 }: ButtonFormProps<T>) {
     return (
         <button type="submit" class="buttonRoot" form={form.formId}>
-            <ProcessIndicator isActive={isLoading ?? false} />
+            <ProcessIndicator isActive={isProcessing ?? false} />
             <>
                 {text}
                 {graphics}

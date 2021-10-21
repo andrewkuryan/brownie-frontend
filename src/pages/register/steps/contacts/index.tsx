@@ -22,7 +22,7 @@ const EmailContactOption: FunctionalComponent<{ selected: boolean } & ReduxProps
     useStore,
     dispatch,
 }) => {
-    const isProcessing = useStore(state => state.isProcessing, 'ContactsStepView');
+    const isProcessing = useStore(state => state.isProcessing, 'EmailContactOption');
     const { formProps } = useForm({
         structure: { email: 'string' },
         inputValidators: {
@@ -48,7 +48,11 @@ const EmailContactOption: FunctionalComponent<{ selected: boolean } & ReduxProps
             <div class="emailInputWrapper">
                 <Form formProps={formProps}>
                     <FormInput form={formProps} name={'email'} placeholder="Email address" />
-                    <SubmitButton form={formProps} text="Confirm" />
+                    <SubmitButton
+                        form={formProps}
+                        text="Confirm"
+                        isProcessing={isProcessing}
+                    />
                 </Form>
             </div>
         </div>
