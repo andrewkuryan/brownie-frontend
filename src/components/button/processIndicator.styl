@@ -1,0 +1,35 @@
+@import "@colors.styl"
+
+.buttonSpinner
+  width calc(100% - 16px)
+  height calc(100% - 16px)
+  margin 8px
+  position absolute
+  top 0
+  left 0
+  background-color primeGreen
+  opacity 0
+  transition opacity 0.2s ease-in-out
+
+  &.active
+    opacity 1
+
+  .path
+    stroke white
+    stroke-width 8px
+    stroke-linecap round
+    fill transparent
+    transform-origin center
+    animation animation 1.2s ease-in-out infinite
+    filter drop-shadow(0 0 4px rgba(white, 0.8))
+
+@keyframes animation
+  0%
+    stroke-dasharray 1 70
+    stroke-dashoffset 0
+  50%
+    stroke-dasharray 61 10
+    stroke-dashoffset -70
+  100%
+    stroke-dasharray 1 70
+    stroke-dashoffset -140

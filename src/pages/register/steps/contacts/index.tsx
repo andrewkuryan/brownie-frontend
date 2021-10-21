@@ -10,17 +10,19 @@ import {
     shouldMatchRegex,
     withConditions,
 } from '@components/form/validators';
+import { ReduxProps } from '../../../../Main';
 
 import '../commonStep.styl';
 import './contactsStep.styl';
 import telegramIcon from '@assets/telegram_icon_136124_white.svg';
 import copyIcon from '@assets/content_copy_white_48dp.svg';
-import { ReduxProps } from '../../../../Main';
 
 const EmailContactOption: FunctionalComponent<{ selected: boolean } & ReduxProps> = ({
     selected,
+    useStore,
     dispatch,
 }) => {
+    const isProcessing = useStore(state => state.isProcessing, 'ContactsStepView');
     const { formProps } = useForm({
         structure: { email: 'string' },
         inputValidators: {

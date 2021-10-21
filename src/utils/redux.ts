@@ -5,15 +5,13 @@ import { AppAction, AppState } from '@application/Store';
 export function useStore<T>(
     store: Store<AppState, AppAction>,
     getter: (state: AppState) => T,
+    componentName?: string,
 ) {
     const [reduxState, setReduxState] = useState(getter(store.getState()));
     useEffect(() => {
-        console.log('Use effect (useStore)');
         const unsubscribe = store.subscribe(() => {
-            console.log('%cOLD STATE:', 'color:red;', reduxState);
-            console.log('%cNEW STATE:', 'color:green;', store.getState());
             if (!deepEqual(getter(store.getState()), reduxState)) {
-                console.log('%cUPDATE STATE', 'color: yellow;');
+                console.log(`%cUPDATE COMPONENT ${componentName}`, 'color: red;');
                 setReduxState(getter(store.getState()));
             }
         });

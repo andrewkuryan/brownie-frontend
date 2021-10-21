@@ -8,7 +8,13 @@ import { detect } from 'detect-browser';
 import FetchBackendApi from '@api/FetchBackendApi';
 import SrpGenerator from '@utils/crypto/srp';
 import { applyMiddleware, createStore } from 'redux';
-import { AppAction, appReducer, AppState, defaultAppState } from '@application/Store';
+import {
+    AppAction,
+    appReducer,
+    AppState,
+    defaultAppState,
+    loggingMiddleware,
+} from '@application/Store';
 import {
     addEmailMiddleware,
     fulfillUserMiddleware,
@@ -44,6 +50,7 @@ createSession().then(async session => {
         appReducer,
         defaultAppState,
         applyMiddleware(
+            loggingMiddleware,
             loadUserMiddleware(api),
             addEmailMiddleware(api),
             verifyContactMiddleware(api),
@@ -56,7 +63,10 @@ createSession().then(async session => {
         stopBrownieIndicator();
     }
     render(
-        <MainView useStore={getter => useStore(store, getter)} dispatch={store.dispatch} />,
+        <MainView
+            useStore={(getter, componentName) => useStore(store, getter, componentName)}
+            dispatch={store.dispatch}
+        />,
         document.body,
         document.getElementById('app')!,
     );

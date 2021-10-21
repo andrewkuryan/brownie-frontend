@@ -1,5 +1,6 @@
 import { FunctionalComponent, VNode } from 'preact';
 import { FormProps, FormStructure } from '@components/form';
+import ProcessIndicator from './processIndicator';
 
 import './button.styl';
 
@@ -8,6 +9,7 @@ export interface ButtonProps {
     onClick: () => void;
     graphics?: VNode<any>;
     link?: string;
+    isLoading?: boolean;
 }
 
 export const OutlineButton: FunctionalComponent<Omit<ButtonProps, 'link'>> = ({
@@ -23,11 +25,20 @@ export const OutlineButton: FunctionalComponent<Omit<ButtonProps, 'link'>> = ({
     );
 };
 
-const Button: FunctionalComponent<ButtonProps> = ({ text, onClick, graphics, link }) => {
+const Button: FunctionalComponent<ButtonProps> = ({
+    text,
+    onClick,
+    graphics,
+    link,
+    isLoading,
+}) => {
     return link === undefined ? (
         <button class="buttonRoot" onClick={onClick}>
-            {text}
-            {graphics}
+            <ProcessIndicator isActive={isLoading ?? false} />
+            <>
+                {text}
+                {graphics}
+            </>
         </button>
     ) : (
         <a class="buttonRoot" onClick={onClick} href={link}>
@@ -46,11 +57,15 @@ export function SubmitButton<T extends FormStructure>({
     text,
     graphics,
     form,
+    isLoading,
 }: ButtonFormProps<T>) {
     return (
         <button type="submit" class="buttonRoot" form={form.formId}>
-            {text}
-            {graphics}
+            <ProcessIndicator isActive={isLoading ?? false} />
+            <>
+                {text}
+                {graphics}
+            </>
         </button>
     );
 }

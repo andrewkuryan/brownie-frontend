@@ -6,12 +6,12 @@ import { AppAction, AppState } from '@application/Store';
 import ErrorPanel from '@components/errorPanel';
 
 export type ReduxProps = {
-    useStore: <T>(getter: (state: AppState) => T) => T;
+    useStore: <T>(getter: (state: AppState) => T, componentName?: string) => T;
     dispatch: (action: AppAction) => void;
 };
 
 export const MainView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => {
-    const error = useStore(state => state.error);
+    const error = useStore(state => state.error, 'MainView');
 
     return (
         <>

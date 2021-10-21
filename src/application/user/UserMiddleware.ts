@@ -7,13 +7,13 @@ import {
     VerifyContactAction,
     AddEmailContactAction,
 } from '@application/user/UserActions';
-import { errorHandlingMiddleware } from '@application/Store';
+import { errorHandlingMiddlewareWrapper } from '@application/Store';
 import SrpGenerator from '@utils/crypto/srp';
 import { hash512 } from '@utils/crypto/sha';
 
 export const loadUserMiddleware = (api: BackendApi) =>
     middlewareForActionType<LoadUserAction>('USER/LOAD', (middlewareApi, action) => {
-        errorHandlingMiddleware(middlewareApi, () =>
+        errorHandlingMiddlewareWrapper(middlewareApi, () =>
             api.userApi
                 .getUser()
                 .then(result =>
@@ -27,7 +27,7 @@ export const addEmailMiddleware = (api: BackendApi) =>
     middlewareForActionType<AddEmailContactAction>(
         'USER/ADD_EMAIL',
         (middlewareApi, action) => {
-            errorHandlingMiddleware(middlewareApi, () =>
+            errorHandlingMiddlewareWrapper(middlewareApi, () =>
                 api.userApi.addEmail(action.payload.emailAddress).then(result => {
                     middlewareApi.dispatch({ type: 'USER/ADD_CONTACT', payload: result });
                 }),
@@ -40,7 +40,7 @@ export const verifyContactMiddleware = (api: BackendApi) =>
     middlewareForActionType<VerifyContactAction>(
         'USER/VERIFY_CONTACT',
         (middlewareApi, action) => {
-            errorHandlingMiddleware(middlewareApi, () =>
+            errorHandlingMiddlewareWrapper(middlewareApi, () =>
                 api.userApi
                     .verifyContact(action.payload.contact, action.payload.verificationCode)
                     .then(result => {
@@ -53,7 +53,7 @@ export const verifyContactMiddleware = (api: BackendApi) =>
 
 export const fulfillUserMiddleware = (api: BackendApi, srpGenerator: SrpGenerator) =>
     middlewareForActionType<FulfillUserAction>('USER/FULFILL', (middlewareApi, action) => {
-        errorHandlingMiddleware(middlewareApi, () =>
+        errorHandlingMiddlewareWrapper(middlewareApi, () =>
             srpGenerator
                 .generateSaltVerifier(action.payload.login, action.payload.password)
                 .then(({ salt, verifier }) => {
@@ -74,7 +74,7 @@ export const loginMiddleware = (api: BackendApi, srpGenerator: SrpGenerator) =>
     middlewareForActionType<LoginAction>('USER/LOGIN', (middlewareApi, action) => {
         const { a, A } = srpGenerator.generateA();
         const { login, password } = action.payload;
-        errorHandlingMiddleware(middlewareApi, () =>
+        errorHandlingMiddlewareWrapper(middlewareApi, () =>
             api.userApi
                 .initLogin({ login, AHex: A.toString(16) })
                 .then(async ({ salt, BHex }) => {

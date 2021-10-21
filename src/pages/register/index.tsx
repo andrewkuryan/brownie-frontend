@@ -17,13 +17,12 @@ import arrowBackActive from '@assets/arrow_back_ios_green.svg';
 import arrowBackDisabled from '@assets/arrow_back_ios_grey.svg';
 
 const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => {
-    const currentUser = useStore(state => state.user.currentUser);
+    const currentUser = useStore(state => state.user.currentUser, 'RegisterView');
     const [currentStep, setCurrentStep] = useState<
         'contact' | 'verifyContact' | 'fulfill' | 'done'
     >('contact');
 
     useEffect(() => {
-        console.log('Register useEffect');
         if (currentUser instanceof GuestUser) {
             setCurrentStep('contact');
         } else if (
