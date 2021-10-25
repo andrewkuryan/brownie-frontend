@@ -6,6 +6,7 @@ import {
     LoadUserAction,
     VerifyContactAction,
     AddEmailContactAction,
+    ResendVerificationCodeAction,
 } from '@application/user/UserActions';
 import { commonApiMiddlewareWrapper } from '@application/Store';
 import SrpGenerator from '@utils/crypto/srp';
@@ -13,7 +14,7 @@ import { hash512 } from '@utils/crypto/sha';
 
 export const loadUserMiddleware = (api: BackendApi) =>
     middlewareForActionType<LoadUserAction>('USER/LOAD', (middlewareApi, action) => {
-        commonApiMiddlewareWrapper(middlewareApi, () =>
+        commonApiMiddlewareWrapper(middlewareApi, action, () =>
             api.userApi
                 .getUser()
                 .then(result =>
@@ -27,9 +28,22 @@ export const addEmailMiddleware = (api: BackendApi) =>
     middlewareForActionType<AddEmailContactAction>(
         'USER/ADD_EMAIL',
         (middlewareApi, action) => {
-            commonApiMiddlewareWrapper(middlewareApi, () =>
+            commonApiMiddlewareWrapper(middlewareApi, action, () =>
                 api.userApi.addEmail(action.payload.emailAddress).then(result => {
-                    middlewareApi.dispatch({ type: 'USER/ADD_CONTACT', payload: result });
+                    middlewareApi.dispatch({ type: 'USER/SET_CONTACT', payload: result });
+                }),
+            );
+            return action;
+        },
+    );
+
+export const resendVerificationCodeMiddleware = (api: BackendApi) =>
+    middlewareForActionType<ResendVerificationCodeAction>(
+        'USER/RESEND_VERIFICATION_CODE',
+        (middlewareApi, action) => {
+            commonApiMiddlewareWrapper(middlewareApi, action, () =>
+                api.userApi.resendVerificationCode().then(result => {
+                    middlewareApi.dispatch({ type: 'USER/SET_CONTACT', payload: result });
                 }),
             );
             return action;
@@ -40,11 +54,11 @@ export const verifyContactMiddleware = (api: BackendApi) =>
     middlewareForActionType<VerifyContactAction>(
         'USER/VERIFY_CONTACT',
         (middlewareApi, action) => {
-            commonApiMiddlewareWrapper(middlewareApi, () =>
+            commonApiMiddlewareWrapper(middlewareApi, action, () =>
                 api.userApi
                     .verifyContact(action.payload.contact, action.payload.verificationCode)
                     .then(result => {
-                        middlewareApi.dispatch({ type: 'USER/ADD_CONTACT', payload: result });
+                        middlewareApi.dispatch({ type: 'USER/SET_CONTACT', payload: result });
                     }),
             );
             return action;
@@ -53,7 +67,7 @@ export const verifyContactMiddleware = (api: BackendApi) =>
 
 export const fulfillUserMiddleware = (api: BackendApi, srpGenerator: SrpGenerator) =>
     middlewareForActionType<FulfillUserAction>('USER/FULFILL', (middlewareApi, action) => {
-        commonApiMiddlewareWrapper(middlewareApi, () =>
+        commonApiMiddlewareWrapper(middlewareApi, action, () =>
             srpGenerator
                 .generateSaltVerifier(action.payload.login, action.payload.password)
                 .then(({ salt, verifier }) => {
@@ -74,7 +88,7 @@ export const loginMiddleware = (api: BackendApi, srpGenerator: SrpGenerator) =>
     middlewareForActionType<LoginAction>('USER/LOGIN', (middlewareApi, action) => {
         const { a, A } = srpGenerator.generateA();
         const { login, password } = action.payload;
-        commonApiMiddlewareWrapper(middlewareApi, () =>
+        commonApiMiddlewareWrapper(middlewareApi, action, () =>
             api.userApi
                 .initLogin({ login, AHex: A.toString(16) })
                 .then(async ({ salt, BHex }) => {

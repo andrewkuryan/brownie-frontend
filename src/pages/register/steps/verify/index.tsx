@@ -3,7 +3,7 @@ import { ReduxProps } from '../../../../Main';
 import { UnconfirmedUserContact } from '@entity/Contact';
 import Form, { useForm } from '@components/form';
 import { FormInput } from '@components/input';
-import { SubmitButton } from '@components/button';
+import Button, { SubmitButton } from '@components/button';
 import { isNonZeroLength, shouldBeANumber, withConditions } from '@components/form/validators';
 
 import '../commonStep.styl';
@@ -81,9 +81,20 @@ const VerifyStepView: FunctionalComponent<VerifyStepViewProps & ReduxProps> = ({
                                 }}
                             />
                         ))}
+                        <SubmitButton
+                            form={formProps}
+                            text="Verify"
+                            isProcessing={isProcessing['USER/VERIFY_CONTACT']}
+                        />
                     </div>
+                    <Button
+                        text={'Resend Code'}
+                        onClick={() => {
+                            dispatch({ type: 'USER/RESEND_VERIFICATION_CODE' });
+                        }}
+                        isProcessing={isProcessing['USER/RESEND_VERIFICATION_CODE']}
+                    />
                 </div>
-                <SubmitButton form={formProps} text="Verify" isProcessing={isProcessing} />
             </Form>
         </div>
     );

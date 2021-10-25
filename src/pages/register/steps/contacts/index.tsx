@@ -51,7 +51,7 @@ const EmailContactOption: FunctionalComponent<{ selected: boolean } & ReduxProps
                     <SubmitButton
                         form={formProps}
                         text="Confirm"
-                        isProcessing={isProcessing}
+                        isProcessing={isProcessing['USER/ADD_EMAIL']}
                     />
                 </Form>
             </div>

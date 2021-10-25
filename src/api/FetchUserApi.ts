@@ -30,6 +30,13 @@ export default class FetchUserApi implements BackendUserApi {
         return parseContact(result);
     }
 
+    async resendVerificationCode() {
+        const result = await this.backendApi.post({
+            url: '/api/user/contact/resend-code',
+        });
+        return parseContact(result);
+    }
+
     async verifyContact(contact: UserContact, verificationCode: string) {
         const result = await this.backendApi.post({
             url: `/api/user/contact/${contact.id}/verify`,

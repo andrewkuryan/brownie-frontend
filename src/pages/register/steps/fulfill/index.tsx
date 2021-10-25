@@ -13,7 +13,8 @@ import { ReduxProps } from '../../../../Main';
 import '../commonStep.styl';
 import './fulfillStep.styl';
 
-const FulfillStepView: FunctionalComponent<ReduxProps> = ({ dispatch }) => {
+const FulfillStepView: FunctionalComponent<ReduxProps> = ({ dispatch, useStore }) => {
+    const isProcessing = useStore(state => state.isProcessing, 'FulfillStepView');
     const { formProps } = useForm({
         structure: {
             login: 'string',
@@ -65,7 +66,11 @@ const FulfillStepView: FunctionalComponent<ReduxProps> = ({ dispatch }) => {
                         <FormPasswordInput form={formProps} name={'passwordConfirm'} />
                     </div>
                 </div>
-                <SubmitButton form={formProps} text={'Confirm'} />
+                <SubmitButton
+                    form={formProps}
+                    text={'Confirm'}
+                    isProcessing={isProcessing['USER/FULFILL']}
+                />
             </Form>
         </div>
     );

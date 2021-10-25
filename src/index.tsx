@@ -14,6 +14,7 @@ import {
     fulfillUserMiddleware,
     loadUserMiddleware,
     loginMiddleware,
+    resendVerificationCodeMiddleware,
     verifyContactMiddleware,
 } from '@application/user/UserMiddleware';
 import { useStore } from '@utils/redux';
@@ -44,7 +45,7 @@ createSession().then(async session => {
     const store = createStore<AppState, AppAction, {}, {}>(
         appReducer({
             error: null,
-            isProcessing: false,
+            isProcessing: {},
             user: {
                 currentUser: user,
             },
@@ -54,6 +55,7 @@ createSession().then(async session => {
             loggingMiddleware,
             loadUserMiddleware(api),
             addEmailMiddleware(api),
+            resendVerificationCodeMiddleware(api),
             verifyContactMiddleware(api),
             fulfillUserMiddleware(api, srpGenerator),
             loginMiddleware(api, srpGenerator),

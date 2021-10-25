@@ -45,6 +45,7 @@ export interface VerifyLoginResponse {
 export interface BackendUserApi {
     getUser: () => Promise<User>;
     addEmail: (emailAddress: string) => Promise<UnconfirmedUserContact>;
+    resendVerificationCode: () => Promise<UnconfirmedUserContact>
     verifyContact: (contact: UserContact, verificationCode: string) => Promise<ActiveUserContact>;
     fulfillUser: (params: FulfillUserParams) => Promise<ActiveUser>;
     initLogin: (params: InitLoginParams) => Promise<InitLoginResponse>;

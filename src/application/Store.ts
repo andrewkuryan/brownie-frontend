@@ -6,14 +6,20 @@ import { UserAction } from './user/UserActions';
 export interface AppState {
     user: UserState;
     error: Error | null;
-    isProcessing: boolean;
+    isProcessing: { [key in AppAction['type']]?: true };
 }
 
 export type SetErrorAction = { type: 'APP/SET_ERROR'; payload: Error };
 export type ResetErrorAction = { type: 'APP/RESET_ERROR' };
 
-export type StartProcessingAction = { type: 'APP/START_PROCESSING' };
-export type FinishProcessingAction = { type: 'APP/FINISH_PROCESSING' };
+export type StartProcessingAction = {
+    type: 'APP/START_PROCESSING';
+    payload: AppAction['type'];
+};
+export type FinishProcessingAction = {
+    type: 'APP/FINISH_PROCESSING';
+    payload: AppAction['type'];
+};
 
 export type AppAction =
     | UserAction
@@ -42,14 +48,26 @@ export const appReducer: (defaultState: AppState) => Reducer<AppState, AppAction
                         case 'RESET_ERROR':
                             return { ...state, error: null };
                         case 'START_PROCESSING':
-                            return { ...state, isProcessing: true };
+                            return {
+                                ...state,
+                                isProcessing: {
+                                    ...state.isProcessing,
+                                    [(action as StartProcessingAction).payload]: true,
+                                },
+                            };
                         case 'FINISH_PROCESSING':
-                            return { ...state, isProcessing: false };
+                            return {
+                                ...state,
+                                isProcessing: {
+                                    ...state.isProcessing,
+                                    [(action as FinishProcessingAction).payload]: undefined,
+                                },
+                            };
                         default:
-                            return defaultState;
+                            return state;
                     }
                 default:
-                    return defaultState;
+                    return state;
             }
         };
     };
@@ -64,18 +82,24 @@ export const errorHandlingMiddlewareWrapper = (
 
 export const displayProcessMiddlewareWrapper = (
     middlewareApi: MiddlewareAPI<Dispatch<AppAction>, AppState>,
+    action: AppAction,
     fn: () => Promise<any>,
 ) =>
     Promise.resolve()
-        .then(() => middlewareApi.dispatch({ type: 'APP/START_PROCESSING' }))
+        .then(() =>
+            middlewareApi.dispatch({ type: 'APP/START_PROCESSING', payload: action.type }),
+        )
         .then(() => fn())
-        .finally(() => middlewareApi.dispatch({ type: 'APP/FINISH_PROCESSING' }));
+        .finally(() =>
+            middlewareApi.dispatch({ type: 'APP/FINISH_PROCESSING', payload: action.type }),
+        );
 
 export const commonApiMiddlewareWrapper = (
     middlewareApi: MiddlewareAPI<Dispatch<AppAction>, AppState>,
+    action: AppAction,
     fn: () => Promise<any>,
 ) =>
-    displayProcessMiddlewareWrapper(middlewareApi, () =>
+    displayProcessMiddlewareWrapper(middlewareApi, action, () =>
         errorHandlingMiddlewareWrapper(middlewareApi, fn),
     );
 

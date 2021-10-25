@@ -14,7 +14,7 @@ export const userReducer: (defaultState: UserState) => Reducer<UserState, UserAc
         switch (action.type) {
             case 'USER/SET_USER':
                 return { ...state, currentUser: action.payload };
-            case 'USER/ADD_CONTACT':
+            case 'USER/SET_CONTACT':
                 if (state.currentUser instanceof GuestUser) {
                     return {
                         ...state,
@@ -48,6 +48,8 @@ export const userReducer: (defaultState: UserState) => Reducer<UserState, UserAc
                 return state;
             case 'USER/ADD_EMAIL':
                 return state;
+            case 'USER/RESEND_VERIFICATION_CODE':
+                return state;
             case 'USER/VERIFY_CONTACT':
                 return state;
             case 'USER/FULFILL':
@@ -55,6 +57,6 @@ export const userReducer: (defaultState: UserState) => Reducer<UserState, UserAc
             case 'USER/LOGIN':
                 return state;
             default:
-                return defaultState;
+                return state;
         }
     };
