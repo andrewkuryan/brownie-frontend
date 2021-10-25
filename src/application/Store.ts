@@ -98,10 +98,12 @@ export const commonApiMiddlewareWrapper = (
     middlewareApi: MiddlewareAPI<Dispatch<AppAction>, AppState>,
     action: AppAction,
     fn: () => Promise<any>,
-) =>
+) => {
     displayProcessMiddlewareWrapper(middlewareApi, action, () =>
         errorHandlingMiddlewareWrapper(middlewareApi, fn),
     );
+    return action;
+};
 
 export const loggingMiddleware =
     (api: MiddlewareAPI<Dispatch<AppAction>, AppState>) =>
