@@ -5,8 +5,15 @@ import { FormInput, FormPasswordInput } from '@components/input';
 import { SubmitButton } from '@components/button';
 
 import './login.styl';
+import {
+    isNonZeroLength,
+    shouldBeAtLeastN,
+    shouldBeNotEmpty,
+    withConditions,
+} from '@components/form/validators';
 
-const LoginView: FunctionalComponent<ReduxProps> = ({ dispatch }) => {
+const LoginView: FunctionalComponent<ReduxProps> = ({ dispatch, useStore }) => {
+    const isProcessing = useStore(state => state.isProcessing, 'LoginView');
     const { formProps } = useForm({
         structure: {
             login: 'string',
@@ -15,6 +22,15 @@ const LoginView: FunctionalComponent<ReduxProps> = ({ dispatch }) => {
         onSubmit: ({ login, password }) => {
             dispatch({ type: 'USER/LOGIN', payload: { login, password } });
         },
+        inputValidators: {
+            login: {
+                submitValidate: shouldBeNotEmpty(),
+            },
+            password: {
+                submitValidate: shouldBeNotEmpty(),
+                realtimeValidate: withConditions(shouldBeAtLeastN(5), isNonZeroLength),
+            },
+        },
     });
 
     return (
@@ -22,17 +38,19 @@ const LoginView: FunctionalComponent<ReduxProps> = ({ dispatch }) => {
             <Form formProps={formProps}>
                 <div class="loginCard">
                     <h2>Login</h2>
-                    <div>
-                        <div>
-                            <p>Login</p>
-                            <FormInput form={formProps} name={'login'} />
-                        </div>
-                        <div>
-                            <p>Password</p>
-                            <FormPasswordInput form={formProps} name={'password'} />
-                        </div>
+                    <div class="formField">
+                        <p>Login</p>
+                        <FormInput form={formProps} name={'login'} />
                     </div>
-                    <SubmitButton form={formProps} text={'Confirm'} />
+                    <div class="formField">
+                        <p>Password</p>
+                        <FormPasswordInput form={formProps} name={'password'} />
+                    </div>
+                    <SubmitButton
+                        form={formProps}
+                        text={'Confirm'}
+                        isProcessing={isProcessing['USER/LOGIN']}
+                    />
                 </div>
             </Form>
         </div>
