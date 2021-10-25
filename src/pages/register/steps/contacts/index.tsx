@@ -79,9 +79,7 @@ const TgContactOption: FunctionalComponent<{ user: GuestUser; selected: boolean 
                 />
                 <Button
                     text="Follow the link"
-                    onClick={() => {
-                        console.log('After Follow');
-                    }}
+                    onClick={() => {}}
                     link={formatLink(user)}
                     graphics={<img class="buttonIcon" src={telegramIcon} alt="⬈" />}
                 />

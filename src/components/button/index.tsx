@@ -10,15 +10,17 @@ export interface ButtonProps {
     graphics?: VNode<any>;
     link?: string;
     isProcessing?: boolean;
+    isDisabled?: boolean;
 }
 
 export const OutlineButton: FunctionalComponent<Omit<ButtonProps, 'link'>> = ({
     text,
     onClick,
     graphics,
+    isDisabled,
 }) => {
     return (
-        <button class="outlineButtonRoot" onClick={onClick}>
+        <button class="outlineButtonRoot" onClick={onClick} disabled={isDisabled}>
             {text}
             {graphics}
         </button>
@@ -31,9 +33,10 @@ const Button: FunctionalComponent<ButtonProps> = ({
     graphics,
     link,
     isProcessing,
+    isDisabled,
 }) => {
     return link === undefined ? (
-        <button class="buttonRoot" onClick={onClick}>
+        <button class="buttonRoot" onClick={onClick} disabled={isDisabled}>
             <ProcessIndicator isActive={isProcessing ?? false} />
             <>
                 {text}
@@ -41,7 +44,7 @@ const Button: FunctionalComponent<ButtonProps> = ({
             </>
         </button>
     ) : (
-        <a class="buttonRoot" onClick={onClick} href={link}>
+        <a class="buttonRoot" onClick={onClick} href={isDisabled ? '' : link}>
             {text}
             {graphics}
         </a>
@@ -58,9 +61,10 @@ export function SubmitButton<T extends FormStructure>({
     graphics,
     form,
     isProcessing,
+    isDisabled,
 }: ButtonFormProps<T>) {
     return (
-        <button type="submit" class="buttonRoot" form={form.formId}>
+        <button type="submit" class="buttonRoot" form={form.formId} disabled={isDisabled}>
             <ProcessIndicator isActive={isProcessing ?? false} />
             <>
                 {text}

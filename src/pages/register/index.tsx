@@ -6,21 +6,23 @@ import FulfillStepView from './steps/fulfill';
 import DoneStepView from './steps/done';
 import { ReduxProps } from '../../Main';
 import Stepper from '@components/stepper';
-import Button from '@components/button';
+import { OutlineButton } from '@components/button';
 import { ActiveUser, BlankUser, GuestUser } from '@entity/User';
 import { ActiveUserContact, UnconfirmedUserContact } from '@entity/Contact';
 
 import './register.styl';
-import arrowForwardActive from '@assets/arrow_forward_ios_green.svg';
-import arrowForwardDisabled from '@assets/arrow_forward_ios_grey.svg';
-import arrowBackActive from '@assets/arrow_back_ios_green.svg';
-import arrowBackDisabled from '@assets/arrow_back_ios_grey.svg';
+
+import arrowLeft from '@assets/double_arrow_left_green_48dp.svg';
+import arrowLeftDisabled from '@assets/double_arrow_left_grey_48dp.svg';
+import arrowRight from '@assets/double_arrow_right_green_48dp.svg';
+import arrowRightDisabled from '@assets/double_arrow_right_grey_48dp.svg';
+
+type RegisterStep = 'contact' | 'verifyContact' | 'fulfill' | 'done';
+const steps: Array<RegisterStep> = ['contact', 'verifyContact', 'fulfill', 'done'];
 
 const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => {
     const currentUser = useStore(state => state.user.currentUser, 'RegisterView');
-    const [currentStep, setCurrentStep] = useState<
-        'contact' | 'verifyContact' | 'fulfill' | 'done'
-    >('contact');
+    const [currentStep, setCurrentStep] = useState<RegisterStep>('contact');
 
     useEffect(() => {
         if (currentUser instanceof GuestUser) {
@@ -43,19 +45,44 @@ const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => 
         ...(currentUser instanceof BlankUser ? [currentUser.contact.constructor.name] : []),
     ]);
 
+    const isLeftNavButtonActive = currentStep === 'verifyContact';
+    const isRightNavButtonActive = currentStep === 'contact';
+
     return (
         <div class="registerRoot">
             <div class="stepCard">
                 <div class="stepNavigation">
-                    <Button
+                    <OutlineButton
                         text=""
-                        graphics={<img src={arrowBackDisabled} alt="‹" />}
-                        onClick={() => {}}
+                        graphics={
+                            isLeftNavButtonActive ? (
+                                <img src={arrowLeft} alt="‹‹" />
+                            ) : (
+                                <img src={arrowLeftDisabled} alt="‹‹" />
+                            )
+                        }
+                        onClick={() =>
+                            setCurrentStep(steps[Math.max(steps.indexOf(currentStep) - 1, 0)])
+                        }
+                        isDisabled={!isLeftNavButtonActive}
                     />
-                    <Button
+                    <OutlineButton
                         text=""
-                        graphics={<img src={arrowForwardActive} alt="›" />}
-                        onClick={() => {}}
+                        graphics={
+                            isRightNavButtonActive ? (
+                                <img src={arrowRight} alt="››" />
+                            ) : (
+                                <img src={arrowRightDisabled} alt="››" />
+                            )
+                        }
+                        onClick={() =>
+                            setCurrentStep(
+                                steps[
+                                    Math.min(steps.indexOf(currentStep) + 1, steps.length - 1)
+                                ],
+                            )
+                        }
+                        isDisabled={!isRightNavButtonActive}
                     />
                 </div>
                 <div class="stepContent">
@@ -79,20 +106,7 @@ const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => 
                         <DoneStepView />
                     ) : null}
                 </div>
-                <Stepper
-                    numOfSteps={4}
-                    currentStep={
-                        currentStep === 'contact'
-                            ? 1
-                            : currentStep === 'verifyContact'
-                            ? 2
-                            : currentStep == 'fulfill'
-                            ? 3
-                            : currentStep === 'done'
-                            ? 4
-                            : 0
-                    }
-                />
+                <Stepper numOfSteps={4} currentStep={steps.indexOf(currentStep) + 1} />
             </div>
         </div>
     );
