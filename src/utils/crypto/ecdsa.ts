@@ -33,6 +33,11 @@ async function saveKeys(keyPair: CryptoKeyPair) {
     store.put({ id: 'signKeyPair', keys: keyPair });
 }
 
+export async function clearEcdsaStorage() {
+    const store = await openSignKeyPairStore();
+    store.delete('signKeyPair');
+}
+
 async function loadKeys(): Promise<CryptoKeyPair | null> {
     const store = await openSignKeyPairStore();
     return new Promise((resolve, reject) => {
@@ -52,7 +57,7 @@ export async function getEcdsaKeyPair(): Promise<CryptoKeyPair> {
     if (savedKeys === null) {
         const keyPair = await window.crypto.subtle.generateKey(algorithm, false, ['sign']);
         if (keyPair.publicKey === undefined || keyPair.privateKey === undefined) {
-            throw new Error('Can\'t generate key pair');
+            throw new Error("Can't generate key pair");
         }
         await saveKeys(keyPair);
         return keyPair;

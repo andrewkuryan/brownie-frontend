@@ -111,6 +111,19 @@ export const loginMiddleware = (api: BackendApi, srpGenerator: SrpGenerator) =>
                     } else {
                         throw new Error('Server not verified');
                     }
+                })
+                .then(() => {
+                    window.location.href = '/home';
                 }),
         );
     });
+
+export const logoutMiddleware = (api: BackendApi) =>
+    middlewareForActionType('USER/LOGOUT', (middlewareApi, action) =>
+        commonApiMiddlewareWrapper(middlewareApi, action, () =>
+            api.userApi
+                .logout()
+                .then(() => api.regenerateSession)
+                .then(() => middlewareApi.dispatch({ type: 'USER/LOAD' })),
+        ),
+    );

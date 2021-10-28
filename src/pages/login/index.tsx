@@ -3,14 +3,14 @@ import { ReduxProps } from '../../Main';
 import Form, { useForm } from '@components/form';
 import { FormInput, FormPasswordInput } from '@components/input';
 import { SubmitButton } from '@components/button';
-
-import './login.styl';
 import {
     isNonZeroLength,
     shouldBeAtLeastN,
     shouldBeNotEmpty,
     withConditions,
 } from '@components/form/validators';
+
+import './login.styl';
 
 const LoginView: FunctionalComponent<ReduxProps> = ({ dispatch, useStore }) => {
     const isProcessing = useStore(state => state.isProcessing, 'LoginView');

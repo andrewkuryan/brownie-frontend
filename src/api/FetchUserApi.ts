@@ -69,6 +69,12 @@ export default class FetchUserApi implements BackendUserApi {
         const { RHex, user } = getApiValues(result, { RHex: 'string', user: 'object' });
         return { RHex, user: parseUser(user) as ActiveUser };
     }
+
+    async logout() {
+        await this.backendApi.post({
+            url: '/api/user/logout',
+        });
+    }
 }
 
 function parseUser(parsedJson: any): User {

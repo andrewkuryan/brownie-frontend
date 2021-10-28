@@ -28,3 +28,11 @@ export class UserData {
 }
 
 export type User = GuestUser | BlankUser | ActiveUser;
+
+export function userDisplayName(user: User) {
+    if (user instanceof GuestUser || user instanceof BlankUser) {
+        return `Guest (${user.id})`;
+    } else {
+        return user.data.login;
+    }
+}

@@ -2,6 +2,7 @@ import { FunctionComponent } from 'preact';
 import { Router, Route } from 'preact-router';
 import RegisterView from './pages/register';
 import LoginView from './pages/login';
+import HomeView from './pages/home';
 import { AppAction, AppState } from '@application/Store';
 import ErrorPanel from '@components/errorPanel';
 
@@ -26,6 +27,12 @@ export const MainView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) 
                 <Route
                     path="/login"
                     component={LoginView}
+                    useStore={useStore}
+                    dispatch={dispatch}
+                />
+                <Route
+                    path="/home"
+                    component={HomeView}
                     useStore={useStore}
                     dispatch={dispatch}
                 />

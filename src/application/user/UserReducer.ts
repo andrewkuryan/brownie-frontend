@@ -3,7 +3,7 @@ import { UserAction } from './UserActions';
 import { Reducer } from 'redux';
 
 export interface UserState {
-    currentUser: User | null;
+    currentUser: User;
 }
 
 export const userReducer: (defaultState: UserState) => Reducer<UserState, UserAction> =
@@ -33,7 +33,7 @@ export const userReducer: (defaultState: UserState) => Reducer<UserState, UserAc
                             action.payload,
                         ),
                     };
-                } else if (state.currentUser instanceof ActiveUser) {
+                } else {
                     return {
                         ...state,
                         currentUser: new ActiveUser(
@@ -55,6 +55,8 @@ export const userReducer: (defaultState: UserState) => Reducer<UserState, UserAc
             case 'USER/FULFILL':
                 return state;
             case 'USER/LOGIN':
+                return state;
+            case 'USER/LOGOUT':
                 return state;
             default:
                 return state;

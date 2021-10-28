@@ -7,11 +7,18 @@ export default class FetchBackendApi implements BackendApi {
     userApi: BackendUserApi;
 
     constructor(
-        private readonly session: FrontendSession,
+        private session: FrontendSession,
         private readonly serverPublicKey: CryptoKey,
+        private readonly regenerateSessionFn: (
+            oldSession: FrontendSession,
+        ) => Promise<FrontendSession>,
     ) {
         this.userApi = new FetchUserApi(this);
     }
+
+    regenerateSession = async () => {
+        this.session = await this.regenerateSessionFn(this.session);
+    };
 
     private buildQueryString = (query: Query) =>
         Object.entries(query)
@@ -60,9 +67,14 @@ export default class FetchBackendApi implements BackendApi {
             ...(body ? { body: JSON.stringify(body) } : {}),
         }).then(async res => {
             if (res.ok) {
-                const body = await res.json();
+                let body = await res.text();
+                const verifyObject: any = { url: fullUrl, method };
+                try {
+                    body = JSON.parse(body);
+                    verifyObject.body = body;
+                } catch (exc) {}
                 const verifyResult = await this.verifyRequest(
-                    { url: fullUrl, method, body },
+                    verifyObject,
                     res.headers.get('X-Signature') ?? '',
                 );
                 if (!verifyResult) {

@@ -2,7 +2,12 @@ import { render } from 'preact';
 import { MainView } from './Main';
 
 import FrontendSession from '@entity/Session';
-import { exportPublicKey, getEcdsaKeyPair, parsePublicKey } from '@utils/crypto/ecdsa';
+import {
+    clearEcdsaStorage,
+    exportPublicKey,
+    getEcdsaKeyPair,
+    parsePublicKey,
+} from '@utils/crypto/ecdsa';
 import { detect } from 'detect-browser';
 
 import FetchBackendApi from '@api/FetchBackendApi';
@@ -14,6 +19,7 @@ import {
     fulfillUserMiddleware,
     loadUserMiddleware,
     loginMiddleware,
+    logoutMiddleware,
     resendVerificationCodeMiddleware,
     verifyContactMiddleware,
 } from '@application/user/UserMiddleware';
@@ -33,9 +39,21 @@ async function createSession(): Promise<FrontendSession> {
     );
 }
 
+async function regenerateSession(oldSession: FrontendSession): Promise<FrontendSession> {
+    await clearEcdsaStorage();
+    const newKeyPair = await getEcdsaKeyPair();
+    const exportedPublicKey = await exportPublicKey(newKeyPair.publicKey!);
+    return new FrontendSession(
+        exportedPublicKey,
+        newKeyPair.privateKey!,
+        oldSession.browserName,
+        oldSession.osName,
+    );
+}
+
 createSession().then(async session => {
     const serverPublicKey = await parsePublicKey(ECDSA_SERVER_PUBLIC_KEY);
-    const api = new FetchBackendApi(session, serverPublicKey);
+    const api = new FetchBackendApi(session, serverPublicKey, regenerateSession);
     const srpGenerator = await SrpGenerator.build(
         BigInt('0x' + SRP_N),
         parseInt(SRP_NBitLen),
@@ -59,6 +77,7 @@ createSession().then(async session => {
             verifyContactMiddleware(api),
             fulfillUserMiddleware(api, srpGenerator),
             loginMiddleware(api, srpGenerator),
+            logoutMiddleware(api),
         ),
     );
     if (typeof stopBrownieIndicator === 'function') {

@@ -26,6 +26,7 @@
     .tooltipWrapper
       visibility visible
       opacity 1
+      z-index 99
 
   .tooltipWrapper
     display flex
@@ -41,6 +42,7 @@
     margin-bottom -8px
     bottom 100%
     transition opacity 0.3s ease-in-out, visibility 0.3s ease-in-out
+    z-index -1
     .tooltip
       width 150px
       background-color rgba(errorColor, 0.8)
