@@ -12,10 +12,10 @@ import { ActiveUserContact, UnconfirmedUserContact } from '@entity/Contact';
 
 import './register.styl';
 
-import arrowLeft from '@assets/double_arrow_left_green_48dp.svg';
-import arrowLeftDisabled from '@assets/double_arrow_left_grey_48dp.svg';
-import arrowRight from '@assets/double_arrow_right_green_48dp.svg';
-import arrowRightDisabled from '@assets/double_arrow_right_grey_48dp.svg';
+import ArrowLeft from '@assets/double_arrow_left_green_48dp.svg';
+import ArrowLeftDisabled from '@assets/double_arrow_left_grey_48dp.svg';
+import ArrowRight from '@assets/double_arrow_right_green_48dp.svg';
+import ArrowRightDisabled from '@assets/double_arrow_right_grey_48dp.svg';
 
 type RegisterStep = 'contact' | 'verifyContact' | 'fulfill' | 'done';
 const steps: Array<RegisterStep> = ['contact', 'verifyContact', 'fulfill', 'done'];
@@ -55,11 +55,7 @@ const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => 
                     <OutlineButton
                         text=""
                         graphics={
-                            isLeftNavButtonActive ? (
-                                <img src={arrowLeft} alt="‹‹" />
-                            ) : (
-                                <img src={arrowLeftDisabled} alt="‹‹" />
-                            )
+                            isLeftNavButtonActive ? <ArrowLeft /> : <ArrowLeftDisabled />
                         }
                         onClick={() =>
                             setCurrentStep(steps[Math.max(steps.indexOf(currentStep) - 1, 0)])
@@ -69,11 +65,7 @@ const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => 
                     <OutlineButton
                         text=""
                         graphics={
-                            isRightNavButtonActive ? (
-                                <img src={arrowRight} alt="››" />
-                            ) : (
-                                <img src={arrowRightDisabled} alt="››" />
-                            )
+                            isRightNavButtonActive ? <ArrowRight /> : <ArrowRightDisabled />
                         }
                         onClick={() =>
                             setCurrentStep(

@@ -1,0 +1,89 @@
+@import "@colors.styl"
+@import "@styleUtils.styl"
+
+.postCreateRoot
+  display flex
+  flex-direction column
+  padding 20px
+  h2
+    margin 0 0 40px 0
+    font-size 28px
+  .inputFieldWrapper
+    height 50px
+    .inputField
+      font-size 24px
+      +placeholderStyle()
+        font-size 24px
+  .postObject
+    display flex
+    position relative
+    justify-content center
+    align-items center
+    flex-direction column
+    min-height 200px
+    border-radius 4px
+    border 1px solid lightGray
+    margin-top 20px
+    z-index 25
+    blurAround()
+
+    &:hover
+      &::after
+        opacity 1
+    &:focus-within
+      &::after
+        opacity 1
+
+    .selectBlock
+      display grid
+      grid-template-rows 36px
+      grid-template-columns 36px 36px
+      grid-gap 8px
+      z-index 2
+      svg
+        width 36px
+        height 36px
+        transition fill 0.3s ease-in-out
+        &:hover
+          cursor pointer
+          fill black
+
+    .contentWrapper
+      z-index 2
+      position relative
+      width 100%
+      height 100%
+      .textEditorField
+        width 100%
+        min-height 200px
+        border none
+        padding 4px
+        &:focus
+          box-shadow none
+      .textItem
+        &.bold
+          font-weight 900
+        &.italic
+          font-style italic
+        &.underlined
+          text-decoration underline
+
+
+  .textOptionsBlock
+    position absolute
+    top -28px
+    left 0
+    svg
+      position relative
+      width 24px
+      height 24px
+      border-radius 15px
+      background-color white
+      box-shadow 0 0 5px rgba(0, 0, 0, 0.5)
+      transition box-shadow 0.3s ease-in-out
+      margin-right 4px
+      padding 2px
+      box-sizing border-box
+      &:hover
+        cursor pointer
+        box-shadow 0 0 5px rgba(primeGreen, 0.8)

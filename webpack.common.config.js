@@ -16,6 +16,7 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.tsx', '.js'],
         alias: {
+            react: 'preact/compat',
             '@components': path.resolve(__dirname, 'src/components/'),
             '@utils': path.resolve(__dirname, 'src/utils/'),
             '@entity': path.resolve(__dirname, 'src/entity/'),
@@ -34,7 +35,11 @@ module.exports = {
                 exclude: /node_modules/,
             },
             {
-                test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|eot|ttf)$/,
+                test: /\.svg$/,
+                use: ['@svgr/webpack'],
+            },
+            {
+                test: /\.(png|jpg|jpeg|gif|woff|woff2|eot|ttf)$/,
                 type: 'asset/inline',
             },
         ],

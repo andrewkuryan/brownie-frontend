@@ -1,4 +1,6 @@
 declare module '*.svg' {
-    const value: string;
-    export default value;
+    import { FunctionalComponent } from 'preact';
+
+    const SvgrComponent: FunctionalComponent<{ [key in keyof SVGElement]?: SVGElement[key] }>;
+    export default SvgrComponent;
 }

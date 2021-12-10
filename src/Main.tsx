@@ -3,6 +3,7 @@ import { Router, Route } from 'preact-router';
 import RegisterView from './pages/register';
 import LoginView from './pages/login';
 import HomeView from './pages/home';
+import PostCreateView from './pages/postCreate';
 import { AppAction, AppState } from '@application/Store';
 import ErrorPanel from '@components/errorPanel';
 
@@ -36,6 +37,7 @@ export const MainView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) 
                     useStore={useStore}
                     dispatch={dispatch}
                 />
+                <Route path="/posts/new" component={PostCreateView} />
             </Router>
         </>
     );

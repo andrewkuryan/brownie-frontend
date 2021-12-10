@@ -14,8 +14,9 @@ import { ReduxProps } from '../../../../Main';
 
 import '../commonStep.styl';
 import './contactsStep.styl';
-import telegramIcon from '@assets/telegram_icon_136124_white.svg';
-import copyIcon from '@assets/content_copy_white_48dp.svg';
+
+import TelegramIcon from '@assets/telegram_icon_136124_white.svg';
+import CopyIcon from '@assets/content_copy_white_48dp.svg';
 
 const EmailContactOption: FunctionalComponent<{ selected: boolean } & ReduxProps> = ({
     selected,
@@ -75,13 +76,13 @@ const TgContactOption: FunctionalComponent<{ user: GuestUser; selected: boolean 
                 <Button
                     text="Copy link"
                     onClick={() => navigator.clipboard.writeText(formatLink(user))}
-                    graphics={<img class="buttonIcon" src={copyIcon} alt="⬈" />}
+                    graphics={<TelegramIcon />}
                 />
                 <Button
                     text="Follow the link"
                     onClick={() => {}}
                     link={formatLink(user)}
-                    graphics={<img class="buttonIcon" src={telegramIcon} alt="⬈" />}
+                    graphics={<CopyIcon />}
                 />
             </div>
         </div>

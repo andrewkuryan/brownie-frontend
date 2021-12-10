@@ -4,7 +4,7 @@ import { userDisplayName } from '@entity/User';
 
 import './home.styl';
 
-import userIcon from '@assets/account_circle_black_48dp.svg';
+import UserIcon from '@assets/account_circle_black_48dp.svg';
 
 const HomeView: FunctionalComponent<ReduxProps> = ({ useStore, dispatch }) => {
     const currentUser = useStore(state => state.user.currentUser, 'HomeView');
@@ -12,7 +12,7 @@ const HomeView: FunctionalComponent<ReduxProps> = ({ useStore, dispatch }) => {
         <div class="homeRoot">
             <div class="header">
                 <div class="userInfo">
-                    <img src={userIcon} alt={'👤'} />
+                    <UserIcon />
                     <p>{userDisplayName(currentUser)}</p>
                     <div class="tooltipWrapper">
                         <span class="tooltipArrow" />
