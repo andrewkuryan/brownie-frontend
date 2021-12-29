@@ -2,9 +2,15 @@ import { Dispatch, MiddlewareAPI, Reducer } from 'redux';
 
 import { userReducer, UserState } from './user/UserReducer';
 import { UserAction } from './user/UserActions';
+import { postReducer, PostState } from '@application/post/PostReducer';
+import { PostAction } from '@application/post/PostActions';
+import { FileAction } from '@application/file/FileActions';
+import { fileReducer, FileState } from '@application/file/FileReducer';
 
 export interface AppState {
     user: UserState;
+    post: PostState;
+    file: FileState;
     error: Error | null;
     isProcessing: { [key in AppAction['type']]?: true };
 }
@@ -23,6 +29,8 @@ export type FinishProcessingAction = {
 
 export type AppAction =
     | UserAction
+    | PostAction
+    | FileAction
     | SetErrorAction
     | ResetErrorAction
     | StartProcessingAction
@@ -31,6 +39,8 @@ export type AppAction =
 export const appReducer: (defaultState: AppState) => Reducer<AppState, AppAction> =
     defaultState => {
         const appUserReducer = userReducer(defaultState.user);
+        const appPostReducer = postReducer(defaultState.post);
+        const appFileReducer = fileReducer(defaultState.file);
         return (state: AppState | undefined, action: AppAction) => {
             if (state === undefined) {
                 return defaultState;
@@ -40,6 +50,16 @@ export const appReducer: (defaultState: AppState) => Reducer<AppState, AppAction
                     return {
                         ...state,
                         user: appUserReducer(state.user, action as UserAction),
+                    };
+                case 'POST':
+                    return {
+                        ...state,
+                        post: appPostReducer(state.post, action as PostAction),
+                    };
+                case 'FILE':
+                    return {
+                        ...state,
+                        file: appFileReducer(state.file, action as FileAction),
                     };
                 case 'APP':
                     switch (action.type.split('/')[1]) {

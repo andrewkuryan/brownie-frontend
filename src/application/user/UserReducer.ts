@@ -41,6 +41,7 @@ export const userReducer: (defaultState: UserState) => Reducer<UserState, UserAc
                             state.currentUser.permissions,
                             [...state.currentUser.contacts, action.payload],
                             state.currentUser.data,
+                            state.currentUser.publicItems,
                         ),
                     };
                 }

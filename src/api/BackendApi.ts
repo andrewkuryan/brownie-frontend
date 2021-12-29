@@ -1,12 +1,22 @@
-import { ActiveUser, User } from '@entity/User';
+import { ActiveUser, User, UserPublicItem } from '@entity/User';
 import { ActiveUserContact, UnconfirmedUserContact, UserContact } from '@entity/Contact';
+import { Post } from '@entity/Post';
+import { StorageFile } from '@entity/StorageFile';
 
 export type Query = { [_: string]: string };
 export type FullRequest = { url: string; query?: Query; body?: any };
+export type PreparedRequest = { fullUrl: string; body?: any };
 export type FetchingRequest = { url: string; query?: Query };
 
+export const jsonContentType = ['application/json'];
+export type JsonContentType = typeof jsonContentType;
+
+export const fileContentType = ['image/jpeg'];
+export type FileContentType = typeof fileContentType;
+
 export default interface BackendApi {
-    get: (params: FetchingRequest) => Promise<any>;
+    getJson: (params: FetchingRequest) => Promise<any>;
+    getFile: (params: FetchingRequest, checksum: string) => Promise<ArrayBuffer>;
     post: (params: FullRequest) => Promise<any>;
     put: (params: FullRequest) => Promise<any>;
     delete: (params: FetchingRequest) => Promise<any>;
@@ -14,6 +24,8 @@ export default interface BackendApi {
     regenerateSession: () => Promise<void>;
 
     userApi: BackendUserApi;
+    postApi: BackendPostApi;
+    fileApi: BackendFileApi;
 }
 
 export interface FulfillUserParams {
@@ -56,4 +68,14 @@ export interface BackendUserApi {
     initLogin: (params: InitLoginParams) => Promise<InitLoginResponse>;
     verifyLogin: (params: VerifyLoginParams) => Promise<VerifyLoginResponse>;
     logout: () => Promise<void>;
+
+    getUserPublicInfo: (userId: number) => Promise<Array<UserPublicItem>>;
+}
+
+export interface BackendPostApi {
+    getPostById: (id: number) => Promise<Post>;
+}
+
+export interface BackendFileApi {
+    getFileContent: (file: StorageFile) => Promise<ArrayBuffer>;
 }

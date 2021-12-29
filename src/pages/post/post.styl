@@ -1,0 +1,54 @@
+@import "@colors.styl"
+@import "../common/header/header.styl"
+
+.postRoot
+  display flex
+  width 100%
+  height 100%
+  padding-top headerHeight + 10px
+  box-sizing border-box
+  .postContent
+    margin auto
+    width 60%
+    min-height 100%
+    box-shadow 0 0 5px rgba(primeGreen, 0.6)
+    display flex
+    flex-direction column
+    padding 20px
+    box-sizing border-box
+    .postHeader
+      display flex
+      flex-direction row
+      p
+        font-size 16px
+      p:first-child
+        margin 0 20px 0 0
+        font-weight bold
+        text-transform capitalize
+      p:last-child
+        margin 0
+        color lightGray
+    h1
+      margin 20px 0 0 0
+      font-size 36px
+      font-weight bold
+    .paragraph
+      width 100%
+      margin-top 20px
+      &.textParagraph
+        font-size 18px
+        .boldItem
+          font-weight bold
+        .italicItem
+          font-style italic
+        .underlinedItem
+          text-decoration underline
+      &.imageParagraph
+        display flex
+        flex-direction column
+        align-items center
+        justify-content flex-start
+        p
+          font-size 16px
+          margin 10px 0 0 0
+          color lightGray

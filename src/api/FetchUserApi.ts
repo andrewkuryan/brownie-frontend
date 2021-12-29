@@ -4,7 +4,19 @@ import BackendApi, {
     InitLoginParams,
     VerifyLoginParams,
 } from './BackendApi';
-import { ActiveUser, BlankUser, GuestUser, Permission, User, UserData } from '@entity/User';
+import {
+    ActiveUser,
+    BlankUser,
+    ContactsPublicItem,
+    GuestUser,
+    IDPublicItem,
+    LoginPublicItem,
+    Permission,
+    User,
+    UserData,
+    UserPublicItem,
+    UserPublicItemType,
+} from '@entity/User';
 import { getApiValue, getApiValues } from '@utils/parser';
 import {
     ActiveUserContact,
@@ -18,7 +30,7 @@ export default class FetchUserApi implements BackendUserApi {
     constructor(private backendApi: BackendApi) {}
 
     async getUser(): Promise<User> {
-        const result = await this.backendApi.get({ url: '/api/user' });
+        const result = await this.backendApi.getJson({ url: '/api/user' });
         return parseUser(result);
     }
 
@@ -75,6 +87,13 @@ export default class FetchUserApi implements BackendUserApi {
             url: '/api/user/logout',
         });
     }
+
+    async getUserPublicInfo(userId: number) {
+        const result = await this.backendApi.getJson({
+            url: `/api/user/${userId}/info`,
+        });
+        return parseUserInfo(result);
+    }
 }
 
 function parseUser(parsedJson: any): User {
@@ -89,7 +108,14 @@ function parseUser(parsedJson: any): User {
         case 'ActiveUser':
             const contacts = getApiValue(data, 'contacts', 'object[]').map(parseContact);
             const userData = parseUserData(getApiValue(data, 'data', 'object'));
-            return new ActiveUser(id, permissions as Permission[], contacts, userData);
+            const publicItems = getApiValue(parsedJson, 'publicItems', 'string[]');
+            return new ActiveUser(
+                id,
+                permissions as Permission[],
+                contacts,
+                userData,
+                publicItems as Array<UserPublicItemType>,
+            );
         default:
             throw new Error(`Unknown User type: ${type}`);
     }
@@ -98,6 +124,23 @@ function parseUser(parsedJson: any): User {
 function parseUserData(parsedJson: any): UserData {
     const login = getApiValue(parsedJson, 'login', 'string');
     return new UserData(login);
+}
+
+function parseUserInfo(parsedJson: any): Array<UserPublicItem> {
+    return parsedJson.map((rawItem: any) => {
+        const { type, data } = getApiValues(rawItem, { type: 'string', data: 'object' });
+        switch (type) {
+            case 'ID':
+                const idValue = getApiValue(data, 'value', 'number');
+                return new IDPublicItem(idValue);
+            case 'Login':
+                const loginValue = getApiValue(data, 'value', 'string');
+                return new LoginPublicItem(loginValue);
+            case 'Contacts':
+                const contactsValue = getApiValue(data, 'value', 'object[]').map(parseContact);
+                return new ContactsPublicItem(contactsValue);
+        }
+    });
 }
 
 function parseContact(parsedJson: any): UserContact {

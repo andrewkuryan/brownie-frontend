@@ -23,6 +23,8 @@ import {
     resendVerificationCodeMiddleware,
     verifyContactMiddleware,
 } from '@application/user/UserMiddleware';
+import { selectPostMiddleware } from '@application/post/PostMiddleware';
+import { loadFileMiddleware, releaseFileMiddleware } from '@application/file/FileMiddleware';
 import { useStore } from '@utils/redux';
 
 import './index.styl';
@@ -67,6 +69,13 @@ createSession().then(async session => {
             user: {
                 currentUser: user,
             },
+            post: {
+                selectedPost: null,
+                selectedPostAuthorInfo: null,
+            },
+            file: {
+                files: {},
+            },
         }),
         undefined,
         applyMiddleware(
@@ -78,6 +87,9 @@ createSession().then(async session => {
             fulfillUserMiddleware(api, srpGenerator),
             loginMiddleware(api, srpGenerator),
             logoutMiddleware(api),
+            selectPostMiddleware(api),
+            loadFileMiddleware(api),
+            releaseFileMiddleware(api),
         ),
     );
     if (typeof stopBrownieIndicator === 'function') {

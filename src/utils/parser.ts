@@ -73,7 +73,11 @@ export function getApiValue<T extends PrimitiveTypeName>(
             }
         case 'number?':
         case 'string?':
-            if (typeof obj[path] === typeName.replace('?', '') || obj[path] === null) {
+            if (
+                typeof obj[path] === typeName.replace('?', '') ||
+                obj[path] === null ||
+                obj[path] === undefined
+            ) {
                 return obj[path];
             } else {
                 throw new Error(`Type checking error: ${obj[path]} is not ${typeName}`);

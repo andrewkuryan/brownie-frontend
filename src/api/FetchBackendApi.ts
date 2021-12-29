@@ -1,10 +1,27 @@
-import BackendApi, { BackendUserApi, FetchingRequest, FullRequest, Query } from './BackendApi';
+import BackendApi, {
+    BackendFileApi,
+    BackendPostApi,
+    BackendUserApi,
+    FetchingRequest,
+    fileContentType,
+    FileContentType,
+    FullRequest,
+    jsonContentType,
+    JsonContentType,
+    PreparedRequest,
+    Query,
+} from './BackendApi';
 import FetchUserApi from './FetchUserApi';
 import FrontendSession from '@entity/Session';
 import { createSign, verifySign } from '@utils/crypto/ecdsa';
+import FetchPostApi from '@api/FetchPostApi';
+import FetchFileApi from '@api/FetchFileApi';
+import { arrayBufferToHex } from '@utils/transforms';
 
 export default class FetchBackendApi implements BackendApi {
     userApi: BackendUserApi;
+    postApi: BackendPostApi;
+    fileApi: BackendFileApi;
 
     constructor(
         private session: FrontendSession,
@@ -14,6 +31,8 @@ export default class FetchBackendApi implements BackendApi {
         ) => Promise<FrontendSession>,
     ) {
         this.userApi = new FetchUserApi(this);
+        this.postApi = new FetchPostApi(this);
+        this.fileApi = new FetchFileApi(this);
     }
 
     regenerateSession = async () => {
@@ -42,12 +61,15 @@ export default class FetchBackendApi implements BackendApi {
     }) => createSign(this.session.privateKey, JSON.stringify(request));
 
     private verifyRequest = (
-        result: { url: string; method: string; body?: any },
+        result: { url: string; method: string; body?: any; checksum?: string },
         signature: string,
     ) => verifySign(this.serverPublicKey, signature, JSON.stringify(result));
 
-    private jsonRequest = async (method: string, { url, query, body }: FullRequest) => {
-        const fullUrl = this.buildFullUrl(url, query);
+    private makeRequest = async (
+        method: string,
+        { fullUrl, body }: PreparedRequest,
+        expectedContentTypes: JsonContentType | FileContentType,
+    ) => {
         const signature = await this.signRequest({
             url: fullUrl,
             browserName: this.session.browserName,
@@ -67,20 +89,12 @@ export default class FetchBackendApi implements BackendApi {
             ...(body ? { body: JSON.stringify(body) } : {}),
         }).then(async res => {
             if (res.ok) {
-                let body = await res.text();
-                const verifyObject: any = { url: fullUrl, method };
-                try {
-                    body = JSON.parse(body);
-                    verifyObject.body = body;
-                } catch (exc) {}
-                const verifyResult = await this.verifyRequest(
-                    verifyObject,
-                    res.headers.get('X-Signature') ?? '',
-                );
-                if (!verifyResult) {
-                    throw new Error("Can't verify server response");
+                const contentType = res.headers.get('content-type')?.split(';')[0];
+                if (expectedContentTypes.find(type => type === contentType)) {
+                    return res;
+                } else {
+                    throw new Error(`Unexpected content type: ${contentType}`);
                 }
-                return body;
             } else {
                 const errorText = await res.text();
                 throw new Error(errorText);
@@ -88,7 +102,53 @@ export default class FetchBackendApi implements BackendApi {
         });
     };
 
-    get = async (request: FetchingRequest) => this.jsonRequest('GET', request);
+    private fileRequest = async (
+        method: string,
+        { url, query, body }: FullRequest,
+        checksum: string,
+    ) => {
+        const fullUrl = this.buildFullUrl(url, query);
+        return this.makeRequest(method, { fullUrl, body }, fileContentType).then(async res => {
+            const verifyObject: any = { url: fullUrl, method };
+            const body = await res.arrayBuffer();
+            verifyObject.checksum = arrayBufferToHex(
+                await window.crypto.subtle.digest({ name: 'SHA-512' }, body),
+            );
+            const verifyResult = await this.verifyRequest(
+                verifyObject,
+                res.headers.get('X-Signature') ?? '',
+            );
+            if (!verifyResult || checksum !== verifyObject.checksum) {
+                throw new Error("Can't verify server response");
+            }
+            return body;
+        });
+    };
+
+    private jsonRequest = async (method: string, { url, query, body }: FullRequest) => {
+        const fullUrl = this.buildFullUrl(url, query);
+        return this.makeRequest(method, { fullUrl, body }, jsonContentType).then(async res => {
+            const verifyObject: any = { url: fullUrl, method };
+            let body = await res.text();
+            try {
+                body = JSON.parse(body);
+                verifyObject.body = body;
+            } catch (exc) {}
+            const verifyResult = await this.verifyRequest(
+                verifyObject,
+                res.headers.get('X-Signature') ?? '',
+            );
+            if (!verifyResult) {
+                throw new Error("Can't verify server response");
+            }
+            return body;
+        });
+    };
+
+    getJson = async (request: FetchingRequest) => this.jsonRequest('GET', request);
+
+    getFile = async (request: FetchingRequest, checksum: string) =>
+        this.fileRequest('GET', request, checksum);
 
     post = async (request: FullRequest) => this.jsonRequest('POST', request);
 
