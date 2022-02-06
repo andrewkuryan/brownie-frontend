@@ -61,9 +61,19 @@ export default class FetchBackendApi implements BackendApi {
     }) => createSign(this.session.privateKey, JSON.stringify(request));
 
     private verifyRequest = (
-        result: { url: string; method: string; body?: any; checksum?: string },
+        result: { url: string; method: string; body?: string; checksum?: string },
         signature: string,
-    ) => verifySign(this.serverPublicKey, signature, JSON.stringify(result));
+    ) => verifySign(this.serverPublicKey, signature, this.stringifyResult(result));
+
+    private stringifyResult = (result: {
+        url: string;
+        method: string;
+        body?: string;
+        checksum?: string;
+    }) =>
+        `{"url":"${result.url}","method":"${result.method}"${
+            result.body ? `,"body":${result.body}` : ''
+        }${result.checksum ? `,"checksum":"${result.checksum}"` : ''}}`;
 
     private makeRequest = async (
         method: string,
@@ -130,9 +140,9 @@ export default class FetchBackendApi implements BackendApi {
         return this.makeRequest(method, { fullUrl, body }, jsonContentType).then(async res => {
             const verifyObject: any = { url: fullUrl, method };
             let body = await res.text();
+            verifyObject.body = body;
             try {
                 body = JSON.parse(body);
-                verifyObject.body = body;
             } catch (exc) {}
             const verifyResult = await this.verifyRequest(
                 verifyObject,

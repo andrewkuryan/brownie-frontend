@@ -1,9 +1,5 @@
 export function stringToArrayBuffer(text: string): ArrayBuffer {
-    const bufView = new Uint8Array(text.length);
-    for (let i = 0, strLen = text.length; i < strLen; i++) {
-        bufView[i] = text.charCodeAt(i);
-    }
-    return bufView.buffer;
+    return new TextEncoder().encode(text).buffer
 }
 
 export function arrayBufferToBase64(buffer: ArrayBuffer): string {

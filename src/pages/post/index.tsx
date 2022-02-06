@@ -3,10 +3,19 @@ import { ReduxProps } from '../../Main';
 import { useEffect } from 'preact/hooks';
 import HeaderView from '../common/header';
 import { userLogin } from '@entity/User';
-import { ImageParagraph, TextItem, TextParagraph } from '@entity/Post';
+import {
+    ImageParagraph,
+    postCategories,
+    tagColorToRgb,
+    TextItem,
+    TextParagraph,
+} from '@entity/Post';
 import ApiImage from '@components/fat/apiImage';
 
 import './post.styl';
+
+import UserIcon from '@assets/account_circle_black_48dp.svg';
+import HomeIcon from '@assets/home_black_18dp.svg';
 
 interface PostViewProps extends ReduxProps {
     id: number;
@@ -21,17 +30,34 @@ const PostView: FunctionalComponent<PostViewProps> = ({ id, useStore, dispatch }
     useEffect(() => {
         dispatch({ type: 'POST/SELECT_POST', payload: id });
     }, []);
-    console.log(selectedPost);
-    console.log(selectedPostAuthorInfo);
     return (
         <div class="postRoot">
             <HeaderView useStore={useStore} dispatch={dispatch} />
             <div class="postContent">
+                {selectedPost && postCategories(selectedPost).length > 0 && (
+                    <div class="postCategories">
+                        <HomeIcon />
+                        <span class="categoryDivider">»</span>
+                        {postCategories(selectedPost).map((category, index) =>
+                            index > 0 ? (
+                                <>
+                                    <span class="categoryDivider">»</span>
+                                    <span class="categoryName">{category}</span>
+                                </>
+                            ) : (
+                                <span class="categoryName">{category}</span>
+                            ),
+                        )}
+                    </div>
+                )}
                 <div class="postHeader">
-                    <p>
-                        {(selectedPostAuthorInfo && userLogin(selectedPostAuthorInfo)) ??
-                            'Anonymous'}
-                    </p>
+                    <div class="userInfo">
+                        <UserIcon />
+                        <p>
+                            {(selectedPostAuthorInfo && userLogin(selectedPostAuthorInfo)) ??
+                                'Anonymous'}
+                        </p>
+                    </div>
                     <p>
                         {selectedPost?.createdAt?.toLocaleDateString('en-US', {
                             year: 'numeric',
@@ -43,6 +69,18 @@ const PostView: FunctionalComponent<PostViewProps> = ({ id, useStore, dispatch }
                     </p>
                 </div>
                 <h1>{selectedPost?.title}</h1>
+                {selectedPost && selectedPost.tags.length > 0 && (
+                    <div class="postTags">
+                        {selectedPost.tags.map(tag => (
+                            <span
+                                class="postTag"
+                                style={{ backgroundColor: tagColorToRgb(tag.color) }}
+                            >
+                                {tag.name}
+                            </span>
+                        ))}
+                    </div>
+                )}
                 {selectedPost?.paragraphs?.map(paragraph => {
                     if (paragraph instanceof TextParagraph) {
                         return <TextParagraphView {...paragraph} />;
@@ -74,7 +112,7 @@ const TextParagraphView: FunctionalComponent<TextParagraph> = ({ items }) => {
 const TextItemView: FunctionalComponent<TextItem> = ({ text, formatting }) => {
     return (
         <span
-            class={`${formatting.fontWeight === 'BOLD' ? 'boldItem' : ''} ${
+            class={`textItem ${formatting.fontWeight === 'BOLD' ? 'boldItem' : ''} ${
                 formatting.fontStyle === 'ITALIC' ? 'italicItem' : ''
             } ${formatting.textDecoration === 'UNDERLINE' ? 'underlinedItem' : ''}`}
         >

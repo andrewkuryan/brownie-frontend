@@ -16,27 +16,68 @@
     flex-direction column
     padding 20px
     box-sizing border-box
+    .postCategories
+      display flex
+      flex-direction row
+      align-items center
+      color lightGray
+      font-weight bold
+      svg
+        width 16px
+        height 16px
+        path
+          &:last-child
+            fill veryLightGray
+      .categoryName
+        font-size 12px
+        &:last-child
+          color primeGreen
+      .categoryDivider
+        font-size 14px
+        margin 0 5px 0 5px
     .postHeader
       display flex
       flex-direction row
+      justify-content space-between
+      margin-top 10px
       p
         font-size 16px
-      p:first-child
-        margin 0 20px 0 0
-        font-weight bold
-        text-transform capitalize
-      p:last-child
         margin 0
         color lightGray
+      .userInfo
+        display flex
+        flex-direction row
+        align-items center
+        svg
+          width 24px
+          height 24px
+          margin-right 4px
+        p
+          font-weight bold
+          text-transform capitalize
+          color black
     h1
       margin 20px 0 0 0
       font-size 36px
       font-weight bold
+    .postTags
+      margin-top 10px
+      display flex
+      .postTag
+        font-size 16px
+        border-radius 8px
+        padding 3px 8px 3px 8px
+        margin-right 8px
     .paragraph
+      display flex
       width 100%
       margin-top 20px
       &.textParagraph
         font-size 18px
+        max-width 100%
+        overflow-wrap break-word
+        .textItem
+          max-width 100%
         .boldItem
           font-weight bold
         .italicItem
@@ -44,7 +85,6 @@
         .underlinedItem
           text-decoration underline
       &.imageParagraph
-        display flex
         flex-direction column
         align-items center
         justify-content flex-start
