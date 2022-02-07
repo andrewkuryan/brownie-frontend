@@ -1,15 +1,18 @@
 import { ActiveUserContact, UserContact } from '@entity/Contact';
 
-export type Permission = 'READ_UPDATES';
+export type UserPermission = 'BrowseOwnPosts' | 'BrowseAllPosts' | 'CreatePosts';
 
 export class GuestUser {
-    constructor(public readonly id: number, public readonly permissions: Array<Permission>) {}
+    constructor(
+        public readonly id: number,
+        public readonly permissions: Array<UserPermission>,
+    ) {}
 }
 
 export class BlankUser {
     constructor(
         public readonly id: number,
-        public readonly permissions: Array<Permission>,
+        public readonly permissions: Array<UserPermission>,
         public readonly contact: UserContact,
     ) {}
 }
@@ -17,7 +20,7 @@ export class BlankUser {
 export class ActiveUser {
     constructor(
         public readonly id: number,
-        public readonly permissions: Array<Permission>,
+        public readonly permissions: Array<UserPermission>,
         public readonly contacts: Array<UserContact>,
         public readonly data: UserData,
         public readonly publicItems: Array<UserPublicItemType>,

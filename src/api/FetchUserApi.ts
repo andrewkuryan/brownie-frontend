@@ -11,9 +11,9 @@ import {
     GuestUser,
     IDPublicItem,
     LoginPublicItem,
-    Permission,
     User,
     UserData,
+    UserPermission,
     UserPublicItem,
     UserPublicItemType,
 } from '@entity/User';
@@ -98,26 +98,40 @@ export default class FetchUserApi implements BackendUserApi {
 
 function parseUser(parsedJson: any): User {
     const { type, data } = getApiValues(parsedJson, { type: 'string', data: 'object' });
-    const { id, permissions } = getApiValues(data, { id: 'number', permissions: 'string[]' });
+    const { id, permissions } = getApiValues(data, { id: 'number', permissions: 'object[]' });
     switch (type) {
-        case 'GuestUser':
-            return new GuestUser(id, permissions as Permission[]);
-        case 'BlankUser':
+        case 'Guest':
+            return new GuestUser(id, permissions.map(parseUserPermission));
+        case 'Blank':
             const contact = parseContact(getApiValue(data, 'contact', 'object'));
-            return new BlankUser(id, permissions as Permission[], contact);
-        case 'ActiveUser':
+            return new BlankUser(id, permissions.map(parseUserPermission), contact);
+        case 'Active':
             const contacts = getApiValue(data, 'contacts', 'object[]').map(parseContact);
             const userData = parseUserData(getApiValue(data, 'data', 'object'));
-            const publicItems = getApiValue(parsedJson, 'publicItems', 'string[]');
+            const publicItems = getApiValue(data, 'publicItems', 'string[]');
             return new ActiveUser(
                 id,
-                permissions as Permission[],
+                permissions.map(parseUserPermission),
                 contacts,
                 userData,
                 publicItems as Array<UserPublicItemType>,
             );
         default:
             throw new Error(`Unknown User type: ${type}`);
+    }
+}
+
+function parseUserPermission(parsedJson: any): UserPermission {
+    const { type } = getApiValues(parsedJson, { type: 'string' });
+    switch (type) {
+        case 'BrowseOwnPosts':
+            return 'BrowseOwnPosts';
+        case 'BrowseAllPosts':
+            return 'BrowseAllPosts';
+        case 'CreatePosts':
+            return 'CreatePosts';
+        default:
+            throw new Error(`Unknown UserPermission type: ${type}`);
     }
 }
 
@@ -158,11 +172,11 @@ function parseContact(parsedJson: any): UserContact {
     });
     let contactData;
     switch (contactDataType) {
-        case 'EmailContactData':
+        case 'Email':
             const emailAddress = getApiValue(rawContactData, 'emailAddress', 'string');
             contactData = new EmailContactData(emailAddress);
             break;
-        case 'TelegramContactData':
+        case 'Telegram':
             const { telegramId, firstName, username } = getApiValues(rawContactData, {
                 telegramId: 'number',
                 firstName: 'string',
@@ -174,9 +188,9 @@ function parseContact(parsedJson: any): UserContact {
             throw new Error(`Unknown ContactData type: ${contactDataType}`);
     }
     switch (contactType) {
-        case 'UnconfirmedUserContact':
+        case 'Unconfirmed':
             return new UnconfirmedUserContact(contactId, contactData);
-        case 'ActiveUserContact':
+        case 'Active':
             return new ActiveUserContact(contactId, contactData);
         default:
             throw new Error(`Unknown Contact type: ${contactType}`);
