@@ -45,7 +45,7 @@ export function deepEqual(x: any, y: any) {
         if (Object.keys(x).length !== Object.keys(y).length) {
             return false;
         }
-        if (x.constructor.name !== y.constructor.name) {
+        if (x.constructor !== y.constructor) {
             return false;
         }
         for (const prop in x) {

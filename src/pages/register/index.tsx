@@ -7,7 +7,7 @@ import DoneStepView from './steps/done';
 import { ReduxProps } from '../../Main';
 import Stepper from '@components/stepper';
 import { OutlineButton } from '@components/button';
-import { ActiveUser, BlankUser, GuestUser } from '@entity/User';
+import { ActiveUser, BlankUser, GuestUser, userContacts } from '@entity/User';
 import { ActiveUserContact, UnconfirmedUserContact } from '@entity/Contact';
 
 import './register.styl';
@@ -41,8 +41,8 @@ const RegisterView: FunctionComponent<ReduxProps> = ({ useStore, dispatch }) => 
             setCurrentStep('done');
         }
     }, [
-        currentUser?.constructor?.name,
-        ...(currentUser instanceof BlankUser ? [currentUser.contact.constructor.name] : []),
+        currentUser.constructor?.name,
+        userContacts(currentUser),
     ]);
 
     const isLeftNavButtonActive = currentStep === 'verifyContact';

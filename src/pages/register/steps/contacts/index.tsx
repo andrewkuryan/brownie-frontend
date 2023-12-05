@@ -15,8 +15,8 @@ import { ReduxProps } from '../../../../Main';
 import '../commonStep.styl';
 import './contactsStep.styl';
 
-import TelegramOptionIcon from '@assets/email_black_48dp.svg';
-import EmailOptionIcon from '@assets/telegram_icon_136124.svg';
+import EmailOptionIcon from '@assets/email_black_48dp.svg';
+import TelegramOptionIcon from '@assets/telegram_icon_136124.svg';
 import TelegramIcon from '@assets/telegram_icon_136124_white.svg';
 import CopyIcon from '@assets/content_copy_white_48dp.svg';
 
@@ -107,17 +107,17 @@ const ContactsStepView: FunctionalComponent<ContactsStepViewProps & ReduxProps> 
             <h2>Enter your contact information</h2>
             <div class="optionsWrapper">
                 <p
-                    class={`contactOption emailOption ${
-                        selectedOption === 'email' ? 'selected' : ''
-                    }`}
+                    class={`contactOption ${selectedOption === 'email' ? 'selected' : ''}`}
                     onClick={() => setSelectedOption('email')}
-                ><EmailOptionIcon/></p>
+                >
+                    <EmailOptionIcon/>
+                </p>
                 <p
-                    class={`contactOption tgOption ${
-                        selectedOption === 'tg' ? 'selected' : ''
-                    }`}
+                    class={`contactOption ${selectedOption === 'tg' ? 'selected' : ''}`}
                     onClick={() => setSelectedOption('tg')}
-                ><TelegramOptionIcon/></p>
+                >
+                    <TelegramOptionIcon/>
+                </p>
             </div>
             <div class="optionContent">
                 <EmailContactOption

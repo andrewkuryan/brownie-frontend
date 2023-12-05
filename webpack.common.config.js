@@ -49,6 +49,7 @@ module.exports = {
             SRP_N: JSON.stringify(runtimeEnv.parsed.SRP_N),
             SRP_NBitLen: JSON.stringify(runtimeEnv.parsed.SRP_NBitLen),
             SRP_g: JSON.stringify(runtimeEnv.parsed.SRP_g),
+            API_URL: JSON.stringify(runtimeEnv.parsed.API_URL),
             ECDSA_SERVER_PUBLIC_KEY: JSON.stringify(
                 generatedEnv.parsed.ECDSA_SERVER_PUBLIC_KEY,
             ),

@@ -4,6 +4,10 @@ import { useState } from 'preact/hooks';
 
 import './input.styl';
 
+import ViewIcon from '@assets/view.svg';
+import PrivateIcon from '@assets/private.svg';
+import ErrorIcon from '@assets/warning_amber_black_48dp.svg';
+
 export interface InputProps {
     placeholder?: string;
     maxLength?: number;
@@ -42,7 +46,9 @@ function FormInputTemplate<T extends FormStructure>({
             />
             {showErrorLabel && (
                 <div id={`error-${inputProps.name}-${formId}`} class="inputError">
-                    <span class="errorLabel" />
+                    <span class="errorLabel">
+                        <ErrorIcon />
+                    </span>
                     <div class="tooltipWrapper">
                         <span class="tooltip" />
                         <span class="tooltipArrow" />
@@ -66,9 +72,11 @@ export function FormPasswordInput<T extends FormStructure>(inputProps: FormInput
             type={type}
             option={
                 <span
-                    class={`passwordToggle ${type}`}
+                    class="passwordToggle"
                     onClick={() => setType(type === 'text' ? 'password' : 'text')}
-                />
+                >
+                    {type === 'text' ? <PrivateIcon /> : <ViewIcon />}
+                </span>
             }
             {...inputProps}
         />

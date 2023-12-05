@@ -5,6 +5,8 @@ static/build.js
 static/progressIndicator.js
 static/styles.css
 static/report.html
+dist
+.firebase
 
 .build.env
 .runtime.env

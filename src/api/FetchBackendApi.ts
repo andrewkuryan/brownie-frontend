@@ -29,6 +29,7 @@ export default class FetchBackendApi implements BackendApi {
         private readonly regenerateSessionFn: (
             oldSession: FrontendSession,
         ) => Promise<FrontendSession>,
+        private readonly baseUrl: string,
     ) {
         this.userApi = new FetchUserApi(this);
         this.postApi = new FetchPostApi(this);
@@ -46,9 +47,9 @@ export default class FetchBackendApi implements BackendApi {
 
     private buildFullUrl = (url: string, query?: Query) => {
         if (query) {
-            return `${url}?${this.buildQueryString(query)}`;
+            return `${this.baseUrl}${url}?${this.buildQueryString(query)}`;
         } else {
-            return url;
+            return `${this.baseUrl}${url}`;
         }
     };
 

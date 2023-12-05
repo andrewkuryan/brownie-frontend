@@ -60,3 +60,13 @@ export function userLogin(publicItems: Array<UserPublicItem>): string | null {
             ?.value ?? null
     );
 }
+
+export function userContacts(user: User) {
+    if (user instanceof GuestUser) {
+        return []
+    } else if (user instanceof BlankUser) {
+        return [user.contact]
+    } else {
+        return user.contacts;
+    }
+}

@@ -51,7 +51,7 @@ module.exports = {
     },
     optimization: {
         minimize: true,
-        minimizer: [`...`, new HtmlMinimizerPlugin()],
+        minimizer: [new HtmlMinimizerPlugin()],
     },
     plugins: [
         ...commonConfig.plugins,

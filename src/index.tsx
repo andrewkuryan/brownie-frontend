@@ -55,7 +55,7 @@ async function regenerateSession(oldSession: FrontendSession): Promise<FrontendS
 
 createSession().then(async session => {
     const serverPublicKey = await parsePublicKey(ECDSA_SERVER_PUBLIC_KEY);
-    const api = new FetchBackendApi(session, serverPublicKey, regenerateSession);
+    const api = new FetchBackendApi(session, serverPublicKey, regenerateSession, API_URL);
     const srpGenerator = await SrpGenerator.build(
         BigInt('0x' + SRP_N),
         parseInt(SRP_NBitLen),
