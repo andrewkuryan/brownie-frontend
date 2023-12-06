@@ -3,6 +3,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackShellPluginNext = require('webpack-shell-plugin-next');
 const HtmlMinimizerPlugin = require('html-minimizer-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const fs = require('fs');
 const util = require('util');
@@ -51,7 +52,7 @@ module.exports = {
     },
     optimization: {
         minimize: true,
-        minimizer: [new HtmlMinimizerPlugin()],
+        minimizer: [new HtmlMinimizerPlugin(), new TerserPlugin()],
     },
     plugins: [
         ...commonConfig.plugins,
